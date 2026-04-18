@@ -4,728 +4,819 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>APEX — AI Positioning & Exposure Index</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --ink:#0c0c0b; --ink2:#2e2e2c; --ink3:#6b6a65; --ink4:#9e9c96; --ink5:#c8c6be;
-  --paper:#f8f7f3; --paper2:#f0efe9; --paper3:#e6e4db; --paper4:#d8d6cc;
-  --accent:#0f4c35; --accent-l:#e8f4ee; --accent-m:#1a6b4a;
-  --red:#8c1f1f; --red-l:#fdf0f0; --amber:#7a4800; --amber-l:#fef6e8;
-  --blue:#1a3a6b; --blue-l:#eef3fc;
-  --gold:#8a6800;
-  --border:rgba(12,12,11,0.08); --border2:rgba(12,12,11,0.15); --border3:rgba(12,12,11,0.25);
-  --font-display:'Playfair Display',Georgia,serif;
-  --font-body:'IBM Plex Sans',-apple-system,sans-serif;
+  --ink:#0a0a09; --ink2:#2a2a28; --ink3:#5c5b57; --ink4:#96948e; --ink5:#c4c2ba;
+  --paper:#f6f5f0; --paper2:#eeedе7; --paper3:#e2e0d8; --paper4:#d0cec4;
+  --green:#0e4430; --green2:#1a6b4a; --green3:#e6f4ec; --green4:#6fcfa3;
+  --red:#7a1a1a; --red2:#fdf0f0; --amber:#6b3d00; --amber2:#fef5e7;
+  --blue:#0f2d5c; --blue2:#edf2fc;
+  --drishti:#2d1854; --drishti2:#f0ebff; --drishti3:#8b5cf6; --drishti4:#ede9fe;
+  --border:rgba(10,10,9,.08); --border2:rgba(10,10,9,.14); --border3:rgba(10,10,9,.22);
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',-apple-system,sans-serif;
   --ease:cubic-bezier(.4,0,.2,1);
-  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --spring:cubic-bezier(.34,1.4,.64,1);
 }
-html{font-family:var(--font-body);background:var(--paper);color:var(--ink);font-size:14px;-webkit-font-smoothing:antialiased;}
+html{font-family:var(--fb);background:var(--paper);color:var(--ink);font-size:14px;-webkit-font-smoothing:antialiased;}
 body{min-height:100vh;overflow-x:hidden;}
 
-/* ── SCREENS ── */
-.screen{display:none;min-height:100vh;}
-.screen.active{display:flex;flex-direction:column;}
-.fadein{animation:fadein .5s var(--ease) both;}
-@keyframes fadein{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
-.stagger-1{animation-delay:.05s;} .stagger-2{animation-delay:.12s;}
-.stagger-3{animation-delay:.19s;} .stagger-4{animation-delay:.26s;}
-.stagger-5{animation-delay:.33s;}
-
-/* ════════════════════════════════════════════════════
-   SCREEN 1 — WELCOME
-════════════════════════════════════════════════════ */
-#s1{
-  background:var(--ink);
-  min-height:100vh;
-  position:relative;overflow:hidden;
-  align-items:stretch;
+/* ── DEMO BAR ── always visible, allows reset/persona switch */
+.demo-bar{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  height:36px;background:var(--ink);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;gap:12px;
 }
-.s1-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  min-height:100vh;
-}
-@media(max-width:700px){.s1-grid{grid-template-columns:1fr;}}
-
-/* left panel */
-.s1-left{
-  padding:52px 48px 52px 52px;
-  display:flex;flex-direction:column;justify-content:space-between;
-  border-right:0.5px solid rgba(255,255,255,.07);
-  position:relative;
-}
-.apex-wordmark{
-  font-family:var(--font-display);
-  font-size:15px;letter-spacing:.18em;
-  color:rgba(248,247,243,.35);
-  text-transform:uppercase;
-  margin-bottom:0;
-}
-.s1-hero{flex:1;display:flex;flex-direction:column;justify-content:center;padding:40px 0 32px;}
-.s1-kicker{
-  font-size:10px;letter-spacing:.16em;text-transform:uppercase;
-  color:rgba(248,247,243,.3);margin-bottom:20px;
-  display:flex;align-items:center;gap:8px;
-}
-.s1-kicker::after{content:'';flex:0 0 28px;height:0.5px;background:rgba(248,247,243,.2);}
-.s1-headline{
-  font-family:var(--font-display);
-  font-size:clamp(32px,4.5vw,52px);
-  line-height:1.06;
-  color:#f8f7f3;
-  letter-spacing:-.02em;
-  margin-bottom:22px;
-}
-.s1-headline em{color:#6fcfa3;font-style:italic;}
-.s1-subhead{
-  font-size:14px;font-weight:300;
-  color:rgba(248,247,243,.45);
-  line-height:1.7;max-width:380px;
-  margin-bottom:36px;
-}
-.s1-stats{
-  display:flex;gap:28px;margin-bottom:36px;
-  padding-top:28px;border-top:0.5px solid rgba(255,255,255,.08);
-}
-.s1-stat-num{
-  font-family:var(--font-display);font-size:26px;
-  color:#f8f7f3;line-height:1;margin-bottom:3px;
-}
-.s1-stat-label{font-size:10px;color:rgba(248,247,243,.3);letter-spacing:.04em;}
-.s1-cta{
-  display:inline-flex;align-items:center;gap:10px;
-  padding:14px 28px;
-  background:#6fcfa3;color:#0c2a1e;
-  border:none;border-radius:6px;
-  font-size:13px;font-weight:500;
-  cursor:pointer;font-family:var(--font-body);
-  transition:all .2s var(--ease);
-  letter-spacing:.01em;align-self:flex-start;
-}
-.s1-cta:hover{background:#8fddb6;transform:translateX(3px);}
-.s1-cta-arrow{transition:transform .2s;}
-.s1-cta:hover .s1-cta-arrow{transform:translateX(4px);}
-.s1-footer{
-  font-size:10px;color:rgba(248,247,243,.2);
-  padding-top:24px;border-top:0.5px solid rgba(255,255,255,.06);
-  display:flex;gap:20px;
-}
-
-/* right panel */
-.s1-right{
-  padding:52px 52px 52px 48px;
-  display:flex;flex-direction:column;justify-content:center;
-  background:rgba(255,255,255,.02);
-}
-.s1-form-title{
-  font-family:var(--font-display);font-size:20px;
-  color:rgba(248,247,243,.7);margin-bottom:6px;
+.demo-bar-left{display:flex;align-items:center;gap:10px;}
+.demo-logo{
+  font-family:var(--fd);font-size:13px;
+  color:rgba(246,245,240,.5);letter-spacing:.14em;
   font-style:italic;
 }
-.s1-form-sub{font-size:11px;color:rgba(248,247,243,.28);margin-bottom:28px;line-height:1.6;}
-.form-field{margin-bottom:18px;}
-.form-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(248,247,243,.3);margin-bottom:7px;display:block;}
-.form-input{
-  width:100%;padding:11px 14px;
-  background:rgba(255,255,255,.05);
-  border:0.5px solid rgba(255,255,255,.12);
-  border-radius:6px;color:#f8f7f3;
-  font-size:13px;font-family:var(--font-body);
-  transition:border-color .15s;outline:none;
+.demo-logo strong{color:#f6f5f0;font-style:normal;}
+.demo-session{
+  font-size:10px;color:rgba(246,245,240,.3);
+  padding:2px 8px;border:0.5px solid rgba(246,245,240,.12);
+  border-radius:3px;letter-spacing:.04em;
 }
-.form-input:focus{border-color:rgba(111,207,163,.5);}
-.form-input::placeholder{color:rgba(248,247,243,.2);}
-.form-select{
-  width:100%;padding:11px 14px;
-  background:rgba(255,255,255,.05);
-  border:0.5px solid rgba(255,255,255,.12);
-  border-radius:6px;color:#f8f7f3;
-  font-size:13px;font-family:var(--font-body);
-  outline:none;cursor:pointer;
-  -webkit-appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(248,247,243,.3)'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 14px center;
+.demo-bar-right{display:flex;align-items:center;gap:6px;}
+.demo-btn{
+  font-size:10px;padding:4px 10px;border-radius:4px;
+  border:0.5px solid rgba(246,245,240,.15);
+  background:rgba(246,245,240,.06);color:rgba(246,245,240,.5);
+  cursor:pointer;font-family:var(--fb);transition:all .15s;
+  letter-spacing:.03em;
 }
-.form-select option{background:#1a1a18;color:#f8f7f3;}
-.ind-select-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.ind-opt{
-  padding:12px 14px;border:0.5px solid rgba(255,255,255,.1);
-  border-radius:8px;cursor:pointer;transition:all .15s;
-  background:rgba(255,255,255,.03);
-}
-.ind-opt:hover{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.06);}
-.ind-opt.sel{border-color:#6fcfa3;background:rgba(111,207,163,.1);}
-.ind-opt-name{font-size:12px;font-weight:500;color:#f8f7f3;margin-bottom:2px;}
-.ind-opt-sub{font-size:10px;color:rgba(248,247,243,.3);}
-.ind-opt-soon{font-size:9px;color:rgba(248,247,243,.2);margin-top:4px;font-style:italic;}
+.demo-btn:hover{background:rgba(246,245,240,.12);color:#f6f5f0;}
+.demo-btn.highlight{border-color:rgba(111,207,163,.4);color:#6fcfa3;}
 
-/* ════════════════════════════════════════════════════
-   SCREEN 2 — PERSONA
-════════════════════════════════════════════════════ */
-#s2{background:var(--paper);padding:0;}
-.s2-inner{
-  max-width:820px;margin:0 auto;
-  padding:56px 28px 64px;
-}
-.step-indicator{
-  display:flex;align-items:center;gap:6px;
-  margin-bottom:36px;
-}
-.step-pip{width:6px;height:6px;border-radius:50%;background:var(--paper3);}
-.step-pip.done{background:var(--accent-m);}
-.step-pip.active{background:var(--ink);width:20px;border-radius:3px;}
-.step-label{font-size:10px;color:var(--ink4);letter-spacing:.08em;text-transform:uppercase;margin-left:6px;}
-.s2-title{
-  font-family:var(--font-display);
-  font-size:clamp(28px,4vw,42px);
-  color:var(--ink);letter-spacing:-.02em;
-  line-height:1.1;margin-bottom:8px;
-}
-.s2-sub{
-  font-size:13px;color:var(--ink3);line-height:1.7;
-  font-weight:300;max-width:520px;margin-bottom:36px;
-}
-.persona-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:40px;}
-@media(max-width:600px){.persona-grid{grid-template-columns:1fr;}}
-.p-card{
-  padding:24px 20px;
-  border:0.5px solid var(--border2);
-  border-radius:10px;cursor:pointer;
-  transition:all .2s var(--ease);
-  background:var(--paper);
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;padding-top:36px;}
+.screen.active{display:flex;flex-direction:column;}
+@keyframes rise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+@keyframes riseFast{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.rise{animation:rise .5s var(--ease) both;}
+.r1{animation-delay:.04s;}.r2{animation-delay:.1s;}.r3{animation-delay:.17s;}
+.r4{animation-delay:.24s;}.r5{animation-delay:.31s;}.r6{animation-delay:.38s;}
+
+/* ════════════════════════════════════
+   S1 — ENTRY
+════════════════════════════════════ */
+#s1{
+  background:var(--ink);
+  min-height:calc(100vh - 36px);
   position:relative;overflow:hidden;
 }
-.p-card::before{
-  content:'';position:absolute;inset:0;
-  background:var(--accent-l);opacity:0;transition:opacity .2s;
+#s1::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 55% at 65% 35%,rgba(14,68,48,.22) 0%,transparent 65%),
+    radial-gradient(ellipse 45% 35% at 15% 75%,rgba(45,24,84,.14) 0%,transparent 55%);
 }
-.p-card:hover{border-color:var(--accent-m);}
-.p-card:hover::before{opacity:1;}
-.p-card.sel{border-color:var(--accent-m);border-width:1.5px;}
-.p-card.sel::before{opacity:1;}
-.p-card-inner{position:relative;z-index:1;}
-.p-num{
-  font-family:var(--font-display);font-size:11px;
-  color:var(--ink4);margin-bottom:14px;font-style:italic;
+.s1-wrap{
+  display:grid;grid-template-columns:55% 45%;
+  min-height:calc(100vh - 36px);position:relative;z-index:1;
 }
-.p-title{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:6px;line-height:1.25;}
-.p-desc{font-size:11px;color:var(--ink3);line-height:1.6;font-weight:300;}
-.p-check{
-  position:absolute;top:16px;right:16px;
-  width:20px;height:20px;border-radius:50%;
-  background:var(--accent-m);
-  display:flex;align-items:center;justify-content:center;
-  opacity:0;transition:opacity .2s var(--ease-spring);
-  z-index:2;
-}
-.p-card.sel .p-check{opacity:1;}
-.nav-row{display:flex;align-items:center;gap:10px;}
-.btn-ghost{
-  padding:10px 20px;border:0.5px solid var(--border3);
-  border-radius:6px;background:none;color:var(--ink2);
-  cursor:pointer;font-family:var(--font-body);font-size:13px;
-  transition:all .15s;
-}
-.btn-ghost:hover{background:var(--paper2);}
-.btn-dark{
-  padding:11px 28px;background:var(--ink);color:var(--paper);
-  border:none;border-radius:6px;
-  font-family:var(--font-body);font-size:13px;font-weight:500;
-  cursor:pointer;transition:all .2s;
-  display:flex;align-items:center;gap:8px;
-}
-.btn-dark:hover{background:var(--ink2);}
-.btn-dark:disabled{opacity:.3;cursor:not-allowed;}
-.btn-green{
-  padding:11px 28px;background:var(--accent-m);color:#fff;
-  border:none;border-radius:6px;
-  font-family:var(--font-body);font-size:13px;font-weight:500;
-  cursor:pointer;transition:all .2s;
-  display:flex;align-items:center;gap:8px;
-}
-.btn-green:hover{background:var(--accent);}
+@media(max-width:720px){.s1-wrap{grid-template-columns:1fr;}}
 
-/* ════════════════════════════════════════════════════
-   SCREEN 3 — CALIBRATION
-════════════════════════════════════════════════════ */
-#s3{background:var(--paper2);height:100vh;overflow:hidden;}
-.cal-top{
-  background:var(--ink);
-  padding:0 24px;height:52px;
+.s1-left{
+  padding:52px 48px 48px 56px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  border-right:0.5px solid rgba(246,245,240,.07);
+}
+.s1-wordmark{
+  display:flex;align-items:center;gap:10px;margin-bottom:0;
+}
+.s1-apex{
+  font-family:var(--fd);font-size:28px;
+  color:#f6f5f0;letter-spacing:.06em;
+  line-height:1;
+}
+.s1-tagline-small{
+  font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(246,245,240,.28);border-left:0.5px solid rgba(246,245,240,.15);
+  padding-left:10px;line-height:1.4;
+}
+.s1-hero{flex:1;display:flex;flex-direction:column;justify-content:center;padding:48px 0 40px;}
+.s1-kicker{
+  display:flex;align-items:center;gap:8px;
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--green4);margin-bottom:22px;
+}
+.s1-kicker-line{flex:0 0 24px;height:0.5px;background:var(--green4);opacity:.5;}
+.s1-h1{
+  font-family:var(--fd);
+  font-size:clamp(34px,5vw,58px);
+  line-height:1.04;color:#f6f5f0;
+  letter-spacing:-.02em;margin-bottom:20px;
+  font-weight:400;
+}
+.s1-h1 em{color:var(--green4);font-style:italic;}
+.s1-body{
+  font-size:14px;font-weight:300;
+  color:rgba(246,245,240,.42);line-height:1.72;
+  max-width:380px;margin-bottom:36px;
+}
+.s1-metrics{
+  display:flex;gap:32px;
+  padding:24px 0;border-top:0.5px solid rgba(246,245,240,.08);
+  margin-bottom:32px;
+}
+.s1-met-n{
+  font-family:var(--fd);font-size:30px;
+  color:#f6f5f0;line-height:1;margin-bottom:4px;
+}
+.s1-met-l{font-size:10px;color:rgba(246,245,240,.28);letter-spacing:.04em;line-height:1.4;}
+.s1-cta{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 26px;background:var(--green4);
+  color:#0a1f14;border:none;border-radius:5px;
+  font-size:13px;font-weight:500;cursor:pointer;
+  font-family:var(--fb);transition:all .22s var(--ease);
+  letter-spacing:.01em;align-self:flex-start;
+}
+.s1-cta:hover{background:#8fddb6;transform:translateX(4px);}
+.s1-cta-arr{transition:transform .2s;}
+.s1-cta:hover .s1-cta-arr{transform:translateX(5px);}
+.s1-foot{
+  font-size:9px;color:rgba(246,245,240,.18);
+  display:flex;gap:16px;padding-top:20px;
+  border-top:0.5px solid rgba(246,245,240,.06);
+}
+
+/* right form panel */
+.s1-right{
+  padding:52px 48px 48px 44px;
+  display:flex;flex-direction:column;justify-content:center;
+  background:rgba(246,245,240,.02);
+}
+.s1-form-hed{
+  font-family:var(--fd);font-size:22px;
+  color:rgba(246,245,240,.65);
+  font-style:italic;margin-bottom:4px;
+}
+.s1-form-sub{font-size:11px;color:rgba(246,245,240,.25);margin-bottom:28px;line-height:1.6;}
+.fl{margin-bottom:16px;}
+.fl-label{
+  font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(246,245,240,.28);margin-bottom:7px;display:block;
+}
+.fi{
+  width:100%;padding:10px 13px;
+  background:rgba(246,245,240,.05);
+  border:0.5px solid rgba(246,245,240,.1);
+  border-radius:5px;color:#f6f5f0;
+  font-size:13px;font-family:var(--fb);outline:none;
+  transition:border-color .15s;
+}
+.fi:focus{border-color:rgba(111,207,163,.45);}
+.fi::placeholder{color:rgba(246,245,240,.18);}
+.fselect{
+  width:100%;padding:10px 13px;
+  background:rgba(246,245,240,.05);
+  border:0.5px solid rgba(246,245,240,.1);
+  border-radius:5px;color:#f6f5f0;
+  font-size:13px;font-family:var(--fb);outline:none;cursor:pointer;
+  -webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(246,245,240,.25)'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+}
+.fselect option{background:#1a1a18;}
+.ind-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.ind-card{
+  padding:12px 13px;border:0.5px solid rgba(246,245,240,.1);
+  border-radius:7px;cursor:pointer;transition:all .15s;
+  background:rgba(246,245,240,.03);
+}
+.ind-card:hover{border-color:rgba(246,245,240,.2);}
+.ind-card.sel{border-color:var(--green4);background:rgba(111,207,163,.09);}
+.ind-card-name{font-size:12px;font-weight:500;color:#f6f5f0;margin-bottom:2px;}
+.ind-card-sub{font-size:10px;color:rgba(246,245,240,.28);}
+
+/* ════════════════════════════════════
+   S2 — PERSONA
+════════════════════════════════════ */
+#s2{background:var(--paper);}
+.s2-wrap{max-width:860px;margin:0 auto;padding:52px 28px 64px;}
+.step-track{display:flex;align-items:center;gap:5px;margin-bottom:40px;}
+.st-pip{width:5px;height:5px;border-radius:50%;background:var(--paper3);}
+.st-pip.on{background:var(--ink);}
+.st-pip.done{background:var(--green2);}
+.st-active{width:22px;height:5px;border-radius:2.5px;background:var(--ink);}
+.st-lbl{font-size:10px;color:var(--ink4);letter-spacing:.08em;text-transform:uppercase;margin-left:8px;}
+.s2-h{
+  font-family:var(--fd);font-size:clamp(28px,4.5vw,44px);
+  color:var(--ink);letter-spacing:-.025em;line-height:1.08;margin-bottom:8px;
+}
+.s2-sub{font-size:13px;color:var(--ink3);line-height:1.7;font-weight:300;max-width:480px;margin-bottom:36px;}
+.p-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:40px;}
+@media(max-width:600px){.p-grid{grid-template-columns:1fr;}}
+.pc{
+  padding:24px 20px;border:0.5px solid var(--border2);
+  border-radius:10px;cursor:pointer;transition:all .2s var(--ease);
+  background:var(--paper);position:relative;overflow:hidden;
+}
+.pc::after{
+  content:'';position:absolute;inset:0;
+  background:var(--green3);opacity:0;transition:opacity .2s;pointer-events:none;
+}
+.pc:hover{border-color:var(--green2);}
+.pc:hover::after{opacity:1;}
+.pc.sel{border-color:var(--green2);border-width:1.5px;}
+.pc.sel::after{opacity:1;}
+.pc-inner{position:relative;z-index:1;}
+.pc-n{
+  font-family:var(--fd);font-size:11px;font-style:italic;
+  color:var(--ink4);margin-bottom:14px;
+}
+.pc-title{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:6px;line-height:1.2;}
+.pc-desc{font-size:11px;color:var(--ink3);line-height:1.6;font-weight:300;}
+.pc-check{
+  position:absolute;top:14px;right:14px;width:20px;height:20px;
+  background:var(--green2);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s var(--spring);z-index:2;
+}
+.pc.sel .pc-check{opacity:1;}
+.navrow{display:flex;gap:8px;align-items:center;}
+.btn-out{
+  padding:10px 20px;border:0.5px solid var(--border3);
+  border-radius:5px;background:none;color:var(--ink2);
+  cursor:pointer;font-family:var(--fb);font-size:12px;transition:all .15s;
+}
+.btn-out:hover{background:var(--paper2);}
+.btn-solid{
+  padding:11px 26px;background:var(--ink);color:var(--paper);
+  border:none;border-radius:5px;font-family:var(--fb);
+  font-size:12px;font-weight:500;cursor:pointer;
+  transition:all .2s;display:inline-flex;align-items:center;gap:7px;
+}
+.btn-solid:hover{background:var(--ink2);}
+.btn-solid:disabled{opacity:.3;cursor:not-allowed;}
+.btn-accent{
+  padding:11px 26px;background:var(--green2);color:#fff;
+  border:none;border-radius:5px;font-family:var(--fb);
+  font-size:12px;font-weight:500;cursor:pointer;
+  transition:all .2s;display:inline-flex;align-items:center;gap:7px;
+}
+.btn-accent:hover{background:var(--green);}
+
+/* ════════════════════════════════════
+   S3 — CALIBRATION
+════════════════════════════════════ */
+#s3{background:var(--paper2);height:calc(100vh - 36px);overflow:hidden;padding-top:36px;}
+.cal-bar{
+  background:var(--ink);height:48px;
   display:flex;align-items:center;justify-content:space-between;
-  flex-shrink:0;
+  padding:0 20px;flex-shrink:0;
 }
-.cal-brand{
-  font-family:var(--font-display);font-size:14px;
-  color:rgba(248,247,243,.6);letter-spacing:.08em;
-}
-.cal-brand strong{color:#f8f7f3;font-style:italic;}
-.cal-tags{display:flex;align-items:center;gap:8px;}
-.ctag{
-  font-size:10px;font-weight:500;padding:3px 9px;border-radius:3px;
-  letter-spacing:.04em;
-}
-.ctag-g{background:rgba(111,207,163,.15);color:#6fcfa3;}
-.ctag-a{background:rgba(255,200,100,.1);color:#fac875;}
-.ctag-b{background:rgba(150,180,255,.1);color:#a0b8ff;}
-.cal-prog-wrap{display:flex;align-items:center;gap:8px;}
-.cal-prog-txt{font-size:10px;color:rgba(248,247,243,.35);}
-.cal-prog-bar{width:80px;height:2px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}
-.cal-prog-fill{height:100%;background:#6fcfa3;border-radius:2px;transition:width .4s var(--ease);}
+.cal-brand{font-family:var(--fd);font-size:15px;color:rgba(246,245,240,.55);letter-spacing:.06em;}
+.cal-brand em{color:#f6f5f0;font-style:italic;}
+.cal-meta{display:flex;align-items:center;gap:8px;}
+.ctag{font-size:10px;font-weight:500;padding:3px 9px;border-radius:3px;letter-spacing:.03em;}
+.ctag-g{background:rgba(111,207,163,.15);color:var(--green4);}
+.ctag-a{background:rgba(255,180,60,.12);color:#f0a830;}
+.ctag-d{background:rgba(139,92,246,.15);color:#a78bfa;}
+.cal-prog{display:flex;align-items:center;gap:7px;}
+.cal-prog-n{font-size:10px;color:rgba(246,245,240,.3);}
+.cal-prog-bar{width:80px;height:2px;background:rgba(246,245,240,.1);border-radius:1px;overflow:hidden;}
+.cal-prog-fill{height:100%;background:var(--green4);border-radius:1px;transition:width .4s var(--ease);}
 
 .cal-body{
   display:grid;grid-template-columns:1fr 1fr;
-  height:calc(100vh - 52px);overflow:hidden;
+  height:calc(100vh - 36px - 48px);overflow:hidden;
 }
-@media(max-width:680px){.cal-body{grid-template-columns:1fr;height:auto;overflow:visible;}}
+@media(max-width:700px){.cal-body{grid-template-columns:1fr;height:auto;overflow:visible;}}
 
-/* LEFT — question flow */
-.cal-left{
-  display:flex;flex-direction:column;
-  background:var(--paper);overflow:hidden;
-  border-right:0.5px solid var(--border);
+/* left */
+.cal-left{display:flex;flex-direction:column;background:var(--paper);border-right:0.5px solid var(--border);}
+.fn-rail{
+  display:flex;overflow-x:auto;border-bottom:0.5px solid var(--border);
+  padding:0 16px;background:var(--paper);flex-shrink:0;
+  scrollbar-width:none;gap:0;
 }
-.fn-spine{
-  display:flex;overflow-x:auto;
-  border-bottom:0.5px solid var(--border);
-  padding:0 20px;background:var(--paper);
-  flex-shrink:0;gap:0;
-  scrollbar-width:none;
+.fn-rail::-webkit-scrollbar{display:none;}
+.fn-tab{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:8px 11px;cursor:pointer;flex-shrink:0;
+  border-bottom:2px solid transparent;transition:all .15s;
+  font-size:10px;color:var(--ink4);
 }
-.fn-spine::-webkit-scrollbar{display:none;}
-.fn-pip{
-  display:flex;flex-direction:column;align-items:center;
-  padding:9px 12px;cursor:pointer;
-  border-bottom:2px solid transparent;
-  transition:all .15s;flex-shrink:0;
-  font-size:10px;color:var(--ink4);gap:4px;
-}
-.fn-pip:hover{color:var(--ink2);}
-.fn-pip.active{color:var(--ink);border-bottom:2px solid var(--ink);}
-.fn-pip.done{color:var(--accent-m);}
-.fn-pip.done .fn-pip-dot{background:var(--accent-m);}
-.fn-pip-dot{width:5px;height:5px;border-radius:50%;background:var(--paper3);transition:background .2s;}
-.fn-pip.active .fn-pip-dot{background:var(--ink);}
+.fn-tab:hover{color:var(--ink2);}
+.fn-tab.act{color:var(--ink);border-bottom-color:var(--ink);font-weight:500;}
+.fn-tab.done{color:var(--green2);}
+.fn-tab-dot{width:4px;height:4px;border-radius:50%;background:var(--paper3);transition:background .2s;}
+.fn-tab.act .fn-tab-dot{background:var(--ink);}
+.fn-tab.done .fn-tab-dot{background:var(--green2);}
 
-.cal-q-area{flex:1;overflow-y:auto;padding:28px 28px 20px;}
-.cal-fn-eyebrow{
-  font-size:10px;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--ink4);margin-bottom:8px;
-  display:flex;align-items:center;gap:8px;
+.cal-qa{flex:1;overflow-y:auto;padding:24px 24px 16px;}
+.fn-eyebrow{
+  display:flex;align-items:center;gap:7px;
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink4);margin-bottom:7px;
 }
-.cal-fn-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.cal-fn-title{
-  font-family:var(--font-display);
-  font-size:clamp(18px,3vw,24px);color:var(--ink);
-  margin-bottom:6px;letter-spacing:-.01em;
+.fn-eyebrow-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.fn-title{
+  font-family:var(--fd);
+  font-size:clamp(18px,3vw,26px);
+  color:var(--ink);margin-bottom:5px;letter-spacing:-.01em;line-height:1.1;
 }
-.cal-fn-sub{
-  font-size:11px;color:var(--ink3);
-  line-height:1.6;font-weight:300;margin-bottom:24px;
-  padding-bottom:20px;border-bottom:0.5px solid var(--border);
+.fn-desc{
+  font-size:11px;color:var(--ink3);line-height:1.6;font-weight:300;
+  margin-bottom:22px;padding-bottom:18px;border-bottom:0.5px solid var(--border);
 }
-.q-item{
-  margin-bottom:20px;padding-bottom:20px;
-  border-bottom:0.5px solid var(--border);
+.qi{margin-bottom:18px;padding-bottom:18px;border-bottom:0.5px solid var(--border);}
+.qi:last-child{border-bottom:none;}
+.qi-lens{font-size:9px;color:var(--ink4);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px;font-style:italic;}
+.qi-text{font-size:12px;color:var(--ink);line-height:1.6;margin-bottom:9px;}
+.sbtns{display:flex;gap:4px;}
+.sbtn{
+  flex:1;height:30px;border-radius:5px;
+  border:0.5px solid var(--border2);background:var(--paper2);
+  font-size:11px;font-weight:500;color:var(--ink3);
+  cursor:pointer;font-family:var(--fb);transition:all .12s;
 }
-.q-item:last-child{border-bottom:none;}
-.q-lens-tag{
-  font-size:9px;color:var(--ink4);letter-spacing:.06em;
-  text-transform:uppercase;margin-bottom:6px;
-  font-style:italic;
-}
-.q-text{font-size:13px;color:var(--ink);line-height:1.6;margin-bottom:10px;}
-.scale-wrap{display:flex;flex-direction:column;gap:5px;}
-.scale-btns{display:flex;gap:5px;}
-.scale-btn{
-  flex:1;height:32px;border-radius:5px;
-  border:0.5px solid var(--border2);
-  background:var(--paper2);
-  font-size:12px;font-weight:500;color:var(--ink3);
-  cursor:pointer;font-family:var(--font-body);
-  transition:all .15s var(--ease);
-}
-.scale-btn:hover{background:var(--paper3);color:var(--ink);}
-.scale-ends{display:flex;justify-content:space-between;}
+.sbtn:hover{background:var(--paper3);color:var(--ink);}
+.sbtn[data-v="1"].sel{background:#fde8e8;border-color:#c44;color:var(--red);}
+.sbtn[data-v="2"].sel{background:#fef2e0;border-color:#c80;color:var(--amber);}
+.sbtn[data-v="3"].sel{background:#fffce6;border-color:#b8860b;color:#5a4000;}
+.sbtn[data-v="4"].sel{background:#e6f4ec;border-color:#2a9;color:var(--green);}
+.sbtn[data-v="5"].sel{background:#daf2ea;border-color:var(--green2);color:var(--green);}
+.scale-ends{display:flex;justify-content:space-between;margin-top:4px;}
 .scale-end{font-size:9px;color:var(--ink4);}
 
-/* scale colour states */
-.scale-btn[data-v="1"].sel{background:#fde8e8;border-color:#c44;color:#8c1f1f;}
-.scale-btn[data-v="2"].sel{background:#fef0de;border-color:#c80;color:#7a4800;}
-.scale-btn[data-v="3"].sel{background:#fffbe6;border-color:#b8860b;color:#6a5000;}
-.scale-btn[data-v="4"].sel{background:#e8f4ee;border-color:#2d9;color:#1a5c36;}
-.scale-btn[data-v="5"].sel{background:#ddf2ea;border-color:#1a6b4a;color:#0f4c35;}
-
-.cal-nav{
-  padding:14px 28px;
-  background:var(--paper);border-top:0.5px solid var(--border);
+.cal-nav-bar{
+  padding:12px 20px;background:var(--paper);
+  border-top:0.5px solid var(--border);flex-shrink:0;
   display:flex;justify-content:space-between;align-items:center;
-  flex-shrink:0;
 }
-.fn-nav-label{font-size:11px;color:var(--ink3);}
-.fn-progress-row{display:flex;gap:4px;align-items:center;}
-.fn-prog-pip{width:5px;height:5px;border-radius:50%;background:var(--paper3);transition:all .2s;}
-.fn-prog-pip.done{background:var(--accent-m);}
-.fn-prog-pip.active{background:var(--ink);width:14px;border-radius:2.5px;}
+.cal-nav-info{display:flex;flex-direction:column;gap:4px;}
+.cal-nav-fn{font-size:11px;font-weight:500;color:var(--ink);}
+.cal-nav-pips{display:flex;gap:4px;align-items:center;}
+.nav-pip{width:4px;height:4px;border-radius:50%;background:var(--paper3);transition:all .2s;}
+.nav-pip.done{background:var(--green2);}
+.nav-pip.act{background:var(--ink);width:12px;border-radius:2px;}
+.cal-nav-btns{display:flex;gap:6px;}
+.cal-nav-btn{
+  padding:7px 16px;border-radius:5px;border:0.5px solid var(--border2);
+  background:var(--paper2);color:var(--ink2);cursor:pointer;
+  font-family:var(--fb);font-size:11px;transition:all .15s;font-weight:500;
+}
+.cal-nav-btn:hover{background:var(--paper3);}
+.cal-nav-btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.cal-nav-btn.primary:hover{background:var(--ink2);}
 
-/* RIGHT — live map */
-.cal-right{
-  overflow-y:auto;
-  display:flex;flex-direction:column;gap:0;
-  background:var(--paper2);
+/* right */
+.cal-right{overflow-y:auto;background:var(--paper2);display:flex;flex-direction:column;}
+.map-shell{background:var(--paper);margin:12px 12px 0;border-radius:10px;border:0.5px solid var(--border);padding:13px 14px;}
+.map-hed{font-size:11px;font-weight:500;color:var(--ink);margin-bottom:1px;}
+.map-sub{font-size:10px;color:var(--ink3);margin-bottom:10px;}
+.map-leg{display:flex;flex-wrap:wrap;gap:5px 10px;margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border);}
+.ml{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--ink3);}
+
+/* signal banner */
+.sig-banner{
+  margin:8px 12px 0;padding:10px 13px;
+  background:var(--drishti);border-radius:8px;
+  font-size:11px;color:rgba(246,245,240,.7);
+  line-height:1.55;display:none;
+  border-left:2px solid var(--drishti3);
 }
-.map-card{
-  background:var(--paper);margin:14px 14px 0;
-  border-radius:10px;border:0.5px solid var(--border);
-  padding:14px 16px;
-}
-.map-card-hed{font-size:11px;font-weight:500;color:var(--ink);margin-bottom:1px;}
-.map-card-sub{font-size:10px;color:var(--ink3);margin-bottom:12px;}
-.sum-card{
-  background:var(--paper);margin:10px 14px;
-  border-radius:10px;border:0.5px solid var(--border);
-  padding:14px 16px;
-}
-.sum-head{font-size:11px;font-weight:500;color:var(--ink);margin-bottom:8px;}
-.sum-row{
-  display:flex;align-items:center;gap:7px;
-  padding:3px 0;font-size:10px;color:var(--ink2);
-  border-bottom:0.5px solid var(--border);
-}
+.sig-banner.show{display:block;}
+.sig-banner strong{color:#c4b5fd;}
+.sig-banner-head{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#a78bfa;margin-bottom:4px;}
+
+.sum-shell{background:var(--paper);margin:8px 12px;border-radius:10px;border:0.5px solid var(--border);padding:13px 14px;}
+.sum-hed{font-size:11px;font-weight:500;color:var(--ink);margin-bottom:8px;}
+.sum-row{display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:0.5px solid var(--border);font-size:10px;color:var(--ink2);}
 .sum-row:last-child{border-bottom:none;}
-.sum-fn{flex:1;font-size:10px;}
-.sum-bar-bg{width:52px;height:3px;background:var(--paper3);border-radius:2px;overflow:hidden;}
-.sum-bar-fill{height:100%;border-radius:2px;transition:width .5s var(--ease);}
-.sum-val{font-size:10px;font-weight:500;color:var(--ink);min-width:24px;}
-.gap-pip{font-size:9px;font-weight:500;padding:1px 6px;border-radius:3px;}
-.briefing-btn{
-  margin:0 14px 14px;padding:12px;
-  border:none;border-radius:8px;
-  font-family:var(--font-body);font-size:12px;font-weight:500;
-  cursor:pointer;transition:all .2s;
-  background:var(--paper3);color:var(--ink3);
+.sum-fn-n{flex:1;font-size:10px;}
+.sum-bg{width:50px;height:3px;background:var(--paper3);border-radius:2px;overflow:hidden;}
+.sum-fill{height:100%;border-radius:2px;transition:width .5s var(--ease);}
+.sum-v{font-size:10px;font-weight:500;color:var(--ink);min-width:22px;}
+.sum-gap{font-size:9px;font-weight:500;padding:1px 5px;border-radius:3px;}
+
+.view-briefing{
+  margin:0 12px 12px;padding:11px;border:none;border-radius:8px;
+  font-family:var(--fb);font-size:12px;font-weight:500;cursor:pointer;
+  transition:all .2s;background:var(--paper3);color:var(--ink3);
   display:flex;align-items:center;justify-content:center;gap:6px;
 }
-.briefing-btn.ready{background:var(--accent-m);color:#fff;}
-.briefing-btn.ready:hover{background:var(--accent);}
-
-/* emerging signal banner */
-.signal-banner{
-  margin:10px 14px 0;padding:10px 14px;
-  background:var(--ink);border-radius:8px;
-  font-size:11px;color:rgba(248,247,243,.7);
-  line-height:1.5;display:none;
-}
-.signal-banner.show{display:block;}
-.signal-banner strong{color:#6fcfa3;}
+.view-briefing.ready{background:var(--green2);color:#fff;}
+.view-briefing.ready:hover{background:var(--green);}
 
 /* tooltip */
 .tip{
-  position:fixed;background:var(--ink);
-  border-radius:8px;padding:10px 13px;
-  font-size:11px;pointer-events:none;
-  display:none;z-index:300;max-width:200px;
-  line-height:1.5;
+  position:fixed;background:var(--ink);border-radius:7px;
+  padding:9px 12px;font-size:11px;pointer-events:none;
+  display:none;z-index:500;max-width:190px;line-height:1.5;
 }
-.tip-name{font-weight:500;font-size:12px;color:#f8f7f3;margin-bottom:3px;}
-.trow{display:flex;justify-content:space-between;gap:8px;color:rgba(248,247,243,.55);margin-top:1px;}
-.tval{font-weight:500;color:#f8f7f3;}
+.tip-nm{font-weight:500;font-size:12px;color:#f6f5f0;margin-bottom:3px;}
+.tr{display:flex;justify-content:space-between;gap:8px;color:rgba(246,245,240,.5);margin-top:1px;}
+.tv{font-weight:500;color:#f6f5f0;}
 
-/* ════════════════════════════════════════════════════
-   SCREEN 4 — APEX BRIEFING (REPORT)
-════════════════════════════════════════════════════ */
-#s4{background:var(--paper);padding:0;}
-.briefing-wrap{max-width:900px;margin:0 auto;padding:52px 28px 96px;}
+/* ════════════════════════════════════
+   S4 — APEX BRIEFING
+════════════════════════════════════ */
+#s4{background:var(--paper);padding-top:36px;}
+.briefing-outer{max-width:980px;margin:0 auto;padding:44px 28px 80px;}
 
-/* briefing header */
-.briefing-top{
-  display:flex;justify-content:space-between;align-items:flex-start;
-  margin-bottom:48px;padding-bottom:32px;
-  border-bottom:0.5px solid var(--border2);
+/* hero band */
+.brf-hero{
+  display:grid;grid-template-columns:1fr auto;gap:24px;
+  align-items:end;padding-bottom:32px;
+  border-bottom:0.5px solid var(--border2);margin-bottom:40px;
 }
-.briefing-brand{
-  font-family:var(--font-display);font-size:13px;
-  letter-spacing:.14em;color:var(--ink4);
-  text-transform:uppercase;margin-bottom:12px;
+@media(max-width:600px){.brf-hero{grid-template-columns:1fr;}}
+.brf-brand{
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink4);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
 }
-.briefing-title{
-  font-family:var(--font-display);
-  font-size:clamp(30px,5vw,52px);
-  color:var(--ink);letter-spacing:-.025em;
-  line-height:1.05;
+.brf-brand::before{content:'';width:16px;height:0.5px;background:var(--ink4);}
+.brf-title{
+  font-family:var(--fd);
+  font-size:clamp(30px,5.5vw,56px);
+  color:var(--ink);letter-spacing:-.03em;line-height:1.04;
+  font-weight:400;
 }
-.briefing-title em{color:var(--accent-m);font-style:italic;}
-.briefing-co{
-  font-size:13px;color:var(--ink3);margin-top:10px;
-  display:flex;gap:16px;flex-wrap:wrap;
+.brf-title em{color:var(--green2);font-style:italic;}
+.brf-meta{
+  font-size:11px;color:var(--ink3);margin-top:10px;
+  display:flex;gap:14px;flex-wrap:wrap;
 }
-.briefing-co span{display:flex;align-items:center;gap:5px;}
-.briefing-date-col{text-align:right;flex-shrink:0;}
-.briefing-apex-num{
-  font-family:var(--font-display);
-  font-size:72px;line-height:1;
-  letter-spacing:-.04em;
+.brf-meta span{display:flex;align-items:center;gap:4px;}
+/* APEX number hero */
+.apex-num-hero{text-align:right;}
+.apex-num-big{
+  font-family:var(--fd);
+  font-size:88px;line-height:.9;
+  letter-spacing:-.04em;color:var(--ink);
+  transition:color .6s;
 }
-.briefing-apex-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:4px;}
-.briefing-apex-bench{font-size:11px;color:var(--ink4);margin-top:3px;}
+.apex-num-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);margin-top:6px;}
+.apex-num-bench{font-size:11px;color:var(--ink4);margin-top:3px;}
+.apex-num-bar{
+  width:120px;height:3px;background:var(--paper3);
+  border-radius:2px;overflow:hidden;margin:8px 0 0 auto;
+}
+.apex-num-bar-fill{height:100%;border-radius:2px;transition:width 1.2s var(--ease);}
 
-/* executive summary */
-.exec-summary{
-  padding:28px 32px;border-radius:12px;
-  background:var(--ink);color:rgba(248,247,243,.85);
-  margin-bottom:40px;
-  position:relative;overflow:hidden;
+/* exec summary */
+.exec-band{
+  padding:28px 30px;border-radius:12px;
+  background:var(--ink);color:rgba(246,245,240,.82);
+  margin-bottom:36px;position:relative;overflow:hidden;
 }
-.exec-summary::before{
-  content:'';position:absolute;
-  top:-40px;right:-40px;width:200px;height:200px;
-  border-radius:50%;background:rgba(111,207,163,.06);
+.exec-band::after{
+  content:'APEX';
+  position:absolute;right:-24px;bottom:-36px;
+  font-family:var(--fd);font-size:130px;
+  color:rgba(246,245,240,.03);letter-spacing:-.04em;
+  pointer-events:none;font-style:italic;line-height:1;
 }
 .exec-eyebrow{
-  font-size:9px;letter-spacing:.15em;text-transform:uppercase;
-  color:#6fcfa3;margin-bottom:14px;
+  font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--green4);margin-bottom:12px;
 }
-.exec-text{
-  font-size:14px;line-height:1.75;font-weight:300;
-  color:rgba(248,247,243,.8);position:relative;z-index:1;
+.exec-body{
+  font-size:14px;line-height:1.78;font-weight:300;
+  color:rgba(246,245,240,.8);position:relative;z-index:1;
 }
-.exec-text strong{color:#f8f7f3;font-weight:500;}
+.exec-body strong{color:#f6f5f0;font-weight:500;}
 
-/* signal metrics */
-.signal-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:10px;margin-bottom:40px;
+/* signal cards */
+.sig-cards{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:10px;margin-bottom:36px;
 }
-.sig-card{
-  padding:18px 18px;border-radius:10px;
+@media(max-width:700px){.sig-cards{grid-template-columns:repeat(2,1fr);}}
+.sc-card{
+  padding:18px 16px;border-radius:9px;
   border:0.5px solid var(--border2);background:var(--paper);
 }
-.sig-label{
-  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--ink3);margin-bottom:6px;
-}
-.sig-val{
-  font-family:var(--font-display);
-  font-size:26px;line-height:1.1;
+.sc-lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px;}
+.sc-val{
+  font-family:var(--fd);font-size:26px;line-height:1.1;
   color:var(--ink);margin-bottom:3px;
 }
-.sig-sub{font-size:10px;color:var(--ink3);line-height:1.4;}
-.sig-card.urgent{border-color:#c44;background:var(--red-l);}
-.sig-card.urgent .sig-val{color:var(--red);}
-.sig-card.opportunity{border-color:var(--accent-m);background:var(--accent-l);}
-.sig-card.opportunity .sig-val{color:var(--accent);}
+.sc-sub{font-size:10px;color:var(--ink3);line-height:1.4;}
+.sc-card.urgent{border-color:#c44;background:var(--red2);}
+.sc-card.urgent .sc-val{color:var(--red);}
+.sc-card.opp{border-color:var(--green2);background:var(--green3);}
+.sc-card.opp .sc-val{color:var(--green);}
 
-/* red zones */
-.section-title-row{
-  display:flex;align-items:baseline;gap:12px;
-  margin-bottom:6px;
+/* section headers */
+.sec-hd{
+  display:flex;align-items:baseline;gap:10px;margin-bottom:5px;
 }
-.section-title{
-  font-family:var(--font-display);
-  font-size:22px;color:var(--ink);
+.sec-title{
+  font-family:var(--fd);font-size:22px;color:var(--ink);
   letter-spacing:-.01em;
 }
-.section-subtitle{font-size:11px;color:var(--ink3);font-weight:300;margin-bottom:20px;line-height:1.6;}
+.sec-sub{font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:18px;line-height:1.6;}
 
-/* function signal bars */
-.fn-signal-list{display:flex;flex-direction:column;gap:8px;margin-bottom:40px;}
-.fn-signal-row{
-  display:flex;align-items:center;gap:12px;
-  padding:12px 16px;border-radius:9px;
+/* fn breakdown */
+.fn-breakdown{display:flex;flex-direction:column;gap:7px;margin-bottom:36px;}
+.fn-brow{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;border-radius:8px;
   background:var(--paper2);border:0.5px solid var(--border);
-  transition:all .15s;
+  transition:all .15s;cursor:default;
 }
-.fn-signal-row:hover{border-color:var(--border2);background:var(--paper);}
-.fn-sig-name{font-size:12px;font-weight:500;color:var(--ink);width:130px;flex-shrink:0;}
-.fn-sig-tracks{flex:1;display:flex;flex-direction:column;gap:4px;}
-.fn-sig-track{display:flex;align-items:center;gap:6px;}
-.fn-sig-track-lbl{font-size:9px;color:var(--ink4);width:56px;flex-shrink:0;letter-spacing:.02em;}
-.fn-sig-bar-bg{flex:1;height:4px;background:var(--paper3);border-radius:2px;overflow:hidden;}
-.fn-sig-bar-fill{height:100%;border-radius:2px;transition:width 1s var(--ease);}
-.fn-sig-val{font-size:10px;font-weight:500;color:var(--ink);min-width:28px;text-align:right;}
-.fn-sig-badge{font-size:9px;font-weight:500;padding:2px 8px;border-radius:3px;flex-shrink:0;}
-.fn-sig-insight{font-size:10px;color:var(--ink3);line-height:1.5;margin-top:5px;font-style:italic;}
+.fn-brow:hover{border-color:var(--border2);background:var(--paper);}
+.fn-brow-name{font-size:12px;font-weight:500;color:var(--ink);width:122px;flex-shrink:0;}
+.fn-brow-tracks{flex:1;display:flex;flex-direction:column;gap:4px;}
+.fn-track{display:flex;align-items:center;gap:6px;}
+.fn-track-lbl{font-size:9px;color:var(--ink4);width:54px;flex-shrink:0;}
+.fn-track-bg{flex:1;height:4px;background:var(--paper3);border-radius:2px;overflow:hidden;}
+.fn-track-fill{height:100%;border-radius:2px;transition:width 1s var(--ease);}
+.fn-track-val{font-size:10px;font-weight:500;color:var(--ink);min-width:26px;text-align:right;}
+.fn-brow-badge{font-size:9px;font-weight:500;padding:2px 8px;border-radius:3px;flex-shrink:0;}
+.fn-insight{font-size:10px;color:var(--ink3);font-style:italic;margin-top:4px;line-height:1.5;}
 
-/* 90-day signal map (priority grid) */
-.signal-map-outer{margin-bottom:40px;}
-.signal-map-label-row{
-  display:flex;justify-content:center;
-  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--ink4);margin-bottom:6px;gap:4px;align-items:center;
+/* signal map (2x2) */
+.smap-outer{margin-bottom:36px;}
+.smap-x-label{
+  text-align:center;font-size:9px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink4);margin-bottom:5px;
 }
-.signal-map-label-row::before,.signal-map-label-row::after{
-  content:'';flex:1;max-width:100px;height:0.5px;background:var(--paper3);
-}
-.signal-map-y-wrap{display:flex;gap:0;align-items:stretch;}
-.signal-map-y-label{
-  writing-mode:vertical-rl;text-orientation:mixed;transform:rotate(180deg);
-  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--ink4);text-align:center;padding:0 8px;
+.smap-ywrap{display:flex;gap:0;align-items:stretch;}
+.smap-ylabel{
+  writing-mode:vertical-rl;text-orientation:mixed;
+  transform:rotate(180deg);font-size:9px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink4);
+  text-align:center;padding:0 6px;
   display:flex;align-items:center;justify-content:center;
 }
-.signal-map-grid{
+.smap-grid{
   flex:1;display:grid;grid-template-columns:1fr 1fr;
   gap:2px;border-radius:10px;overflow:hidden;
   border:0.5px solid var(--border2);background:var(--border);
 }
-.sig-quad{padding:20px 18px;background:var(--paper);}
-.sig-quad-head{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
-.sig-quad-icon{font-size:14px;}
-.sig-quad-title{font-size:12px;font-weight:500;}
-.sig-quad-desc{font-size:10px;color:var(--ink3);line-height:1.5;margin-bottom:12px;}
-.sig-quad-chips{display:flex;flex-wrap:wrap;gap:5px;}
-.sig-chip{font-size:10px;font-weight:500;padding:3px 10px;border-radius:4px;}
+.sq{padding:18px 16px;background:var(--paper);}
+.sq-hd{display:flex;align-items:center;gap:7px;margin-bottom:3px;}
+.sq-icon{font-size:14px;}
+.sq-title{font-size:12px;font-weight:500;}
+.sq-desc{font-size:10px;color:var(--ink3);line-height:1.5;margin-bottom:10px;}
+.sq-chips{display:flex;flex-wrap:wrap;gap:5px;}
+.sq-chip{font-size:10px;font-weight:500;padding:3px 9px;border-radius:4px;}
 
 /* opportunity window */
-.opp-window{
-  padding:28px 30px;border-radius:12px;margin-bottom:40px;
-  background:linear-gradient(135deg,#0a1f15 0%,#0f3324 50%,#142b1e 100%);
+.opp-win{
+  padding:30px 32px;border-radius:12px;margin-bottom:36px;
+  background:linear-gradient(140deg,#08201a 0%,#0e3526 55%,#0a2318 100%);
   position:relative;overflow:hidden;
 }
-.opp-window::after{
-  content:'APEX';
-  position:absolute;right:-20px;bottom:-30px;
-  font-family:var(--font-display);font-size:120px;
-  color:rgba(111,207,163,.04);letter-spacing:-.04em;
-  pointer-events:none;font-style:italic;
+.opp-win::before{
+  content:'';position:absolute;
+  top:-60px;right:-60px;width:240px;height:240px;
+  border-radius:50%;background:rgba(111,207,163,.05);
 }
-.opp-eyebrow{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#6fcfa3;margin-bottom:12px;}
-.opp-title{
-  font-family:var(--font-display);font-size:22px;
-  color:#f8f7f3;line-height:1.2;margin-bottom:12px;
-}
-.opp-body{font-size:12px;color:rgba(248,247,243,.6);line-height:1.75;font-weight:300;margin-bottom:20px;}
-.opp-moves{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;}
-.opp-move{
-  padding:14px;background:rgba(255,255,255,.05);
-  border-radius:8px;border:0.5px solid rgba(111,207,163,.15);
-}
-.opp-move-title{font-size:11px;font-weight:500;color:#6fcfa3;margin-bottom:4px;}
-.opp-move-body{font-size:10px;color:rgba(248,247,243,.5);line-height:1.55;}
+.opp-eyebrow{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--green4);margin-bottom:12px;}
+.opp-title{font-family:var(--fd);font-size:22px;color:#f6f5f0;line-height:1.2;margin-bottom:10px;}
+.opp-body{font-size:12px;color:rgba(246,245,240,.55);line-height:1.78;font-weight:300;margin-bottom:20px;}
+.opp-moves{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px;}
+.opp-move{padding:14px;background:rgba(246,245,240,.05);border-radius:8px;border:0.5px solid rgba(111,207,163,.14);}
+.opp-move-t{font-size:11px;font-weight:500;color:var(--green4);margin-bottom:4px;}
+.opp-move-b{font-size:10px;color:rgba(246,245,240,.45);line-height:1.55;}
 
-/* monday morning CTA */
-.monday{
-  padding:28px 30px;border-radius:12px;
-  border:0.5px solid var(--border2);
-  background:var(--paper2);margin-bottom:40px;
-}
-.monday-title{
-  font-family:var(--font-display);font-size:18px;
-  color:var(--ink);margin-bottom:8px;
-}
-.monday-sub{font-size:12px;color:var(--ink3);line-height:1.7;margin-bottom:18px;font-weight:300;}
-.monday-steps{display:flex;flex-direction:column;gap:8px;}
-.monday-step{
+/* monday */
+.monday{padding:24px 26px;border-radius:11px;border:0.5px solid var(--border2);background:var(--paper2);margin-bottom:36px;}
+.monday-title{font-family:var(--fd);font-size:20px;color:var(--ink);margin-bottom:6px;}
+.monday-sub{font-size:12px;color:var(--ink3);line-height:1.7;margin-bottom:16px;font-weight:300;}
+.monday-steps{display:flex;flex-direction:column;gap:7px;}
+.mstep{
   display:flex;align-items:flex-start;gap:12px;
   padding:12px 14px;background:var(--paper);
   border-radius:8px;border:0.5px solid var(--border);
 }
-.monday-step-num{
-  font-family:var(--font-display);font-size:16px;
-  color:var(--ink4);flex-shrink:0;line-height:1.2;
-  font-style:italic;
+.mstep-n{
+  font-family:var(--fd);font-size:18px;color:var(--ink4);
+  flex-shrink:0;line-height:1.1;font-style:italic;
+  min-width:24px;
 }
-.monday-step-text{font-size:12px;color:var(--ink2);line-height:1.55;}
-.monday-step-text strong{color:var(--ink);font-weight:500;}
+.mstep-t{font-size:12px;color:var(--ink2);line-height:1.6;}
+.mstep-t strong{color:var(--ink);font-weight:500;}
 
-/* footer */
-.briefing-footer{
+/* briefing footer */
+.brf-foot{
   display:flex;justify-content:space-between;align-items:center;
-  padding-top:24px;border-top:0.5px solid var(--border2);
+  padding-top:22px;border-top:0.5px solid var(--border2);
   flex-wrap:wrap;gap:12px;
 }
-.briefing-footer-brand{
-  font-family:var(--font-display);font-size:12px;
-  color:var(--ink4);font-style:italic;
+.brf-foot-brand{font-family:var(--fd);font-size:12px;color:var(--ink4);font-style:italic;}
+.brf-foot-actions{display:flex;gap:8px;align-items:center;}
+
+/* ════════════════════════════════════
+   DRISHTI — AI ADVISOR PANEL
+════════════════════════════════════ */
+.drishti-trigger{
+  position:fixed;bottom:24px;right:24px;z-index:800;
+  width:52px;height:52px;border-radius:50%;
+  background:var(--drishti);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(45,24,84,.35);
+  transition:all .2s var(--spring);
+  font-family:var(--fd);font-size:18px;color:#e9d5ff;
+  font-style:italic;letter-spacing:0;
 }
-.footer-actions{display:flex;gap:10px;}
+.drishti-trigger:hover{transform:scale(1.08);}
+.drishti-trigger.open{background:#f0ebff;color:var(--drishti);}
+.drishti-badge{
+  position:absolute;top:-2px;right:-2px;
+  width:14px;height:14px;background:#ef4444;
+  border-radius:50%;border:2px solid var(--paper);
+  font-size:8px;color:#fff;display:flex;align-items:center;justify-content:center;
+  font-family:var(--fb);font-weight:500;
+}
+
+.drishti-panel{
+  position:fixed;bottom:0;right:0;z-index:799;
+  width:380px;height:100vh;
+  background:var(--paper);border-left:0.5px solid var(--border2);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .35s var(--ease);
+  padding-top:36px;
+}
+.drishti-panel.open{transform:translateX(0);}
+@media(max-width:500px){.drishti-panel{width:100vw;}}
+
+.drishti-header{
+  padding:20px 20px 16px;
+  border-bottom:0.5px solid var(--border);flex-shrink:0;
+  background:var(--drishti);
+}
+.drishti-name{
+  font-family:var(--fd);font-size:20px;
+  color:#f0e6ff;letter-spacing:-.01em;
+  margin-bottom:3px;
+}
+.drishti-title{font-size:10px;color:rgba(233,213,255,.5);letter-spacing:.1em;text-transform:uppercase;}
+.drishti-context{
+  font-size:11px;color:rgba(233,213,255,.45);
+  margin-top:8px;line-height:1.5;
+  padding-top:8px;border-top:0.5px solid rgba(233,213,255,.1);
+}
+
+.drishti-msgs{
+  flex:1;overflow-y:auto;padding:16px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.d-msg{display:flex;flex-direction:column;gap:3px;}
+.d-msg-from{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:2px;}
+.d-msg-bubble{
+  padding:10px 13px;border-radius:10px;
+  font-size:12px;line-height:1.62;
+  max-width:90%;
+}
+.d-msg.drishti .d-msg-bubble{
+  background:var(--drishti4);color:var(--drishti);
+  border-bottom-left-radius:3px;align-self:flex-start;
+}
+.d-msg.user .d-msg-bubble{
+  background:var(--ink);color:rgba(246,245,240,.88);
+  border-bottom-right-radius:3px;align-self:flex-end;
+}
+.d-msg.user{align-items:flex-end;}
+.d-msg.drishti{align-items:flex-start;}
+.d-typing{
+  display:flex;align-items:center;gap:4px;
+  padding:10px 13px;background:var(--drishti4);
+  border-radius:10px;border-bottom-left-radius:3px;
+  width:fit-content;
+}
+.d-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--drishti3);opacity:.4;
+  animation:blink 1.2s infinite;
+}
+.d-dot:nth-child(2){animation-delay:.2s;}
+.d-dot:nth-child(3){animation-delay:.4s;}
+@keyframes blink{0%,80%,100%{opacity:.4;}40%{opacity:1;}}
+
+.drishti-prompts{
+  padding:10px 14px;border-top:0.5px solid var(--border);
+  display:flex;flex-direction:column;gap:5px;flex-shrink:0;
+}
+.d-prompt-label{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:3px;}
+.d-prompt{
+  padding:7px 11px;border:0.5px solid var(--drishti);
+  border-radius:6px;background:var(--drishti4);
+  font-size:11px;color:var(--drishti);cursor:pointer;
+  font-family:var(--fb);transition:all .12s;text-align:left;
+  line-height:1.4;
+}
+.d-prompt:hover{background:var(--drishti);color:#e9d5ff;}
+
+.drishti-input-row{
+  padding:12px 14px;border-top:0.5px solid var(--border);
+  display:flex;gap:7px;flex-shrink:0;
+}
+.d-input{
+  flex:1;padding:9px 12px;border:0.5px solid var(--border2);
+  border-radius:6px;font-size:12px;font-family:var(--fb);
+  background:var(--paper2);color:var(--ink);outline:none;
+  transition:border-color .15s;
+}
+.d-input:focus{border-color:var(--drishti3);}
+.d-send{
+  padding:9px 14px;background:var(--drishti);color:#e9d5ff;
+  border:none;border-radius:6px;cursor:pointer;
+  font-family:var(--fb);font-size:12px;font-weight:500;
+  transition:all .15s;flex-shrink:0;
+}
+.d-send:hover{background:var(--drishti2);color:var(--drishti);}
+.d-send:disabled{opacity:.4;cursor:not-allowed;}
 
 /* chips global */
-.chip-red{background:var(--red-l);color:var(--red);}
-.chip-amber{background:var(--amber-l);color:var(--amber);}
-.chip-green{background:var(--accent-l);color:var(--accent);}
-.chip-blue{background:var(--blue-l);color:var(--blue);}
+.chip-red{background:var(--red2);color:var(--red);}
+.chip-amber{background:var(--amber2);color:var(--amber);}
+.chip-green{background:var(--green3);color:var(--green);}
+.chip-blue{background:var(--blue2);color:var(--blue);}
 
-/* scrollbar */
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--paper4);border-radius:2px;}
 
-@media print{
-  .cal-top,.nav-row,.briefing-footer{display:none!important;}
-  .briefing-wrap{padding:20px;}
-}
+@media print{.demo-bar,.drishti-trigger,.drishti-panel,.cal-bar,.navrow,.brf-foot-actions{display:none!important;} .briefing-outer{padding:20px;}}
 </style>
 </head>
 <body>
 
-<!-- ════ SCREEN 1 — WELCOME ════ -->
+<!-- ── DEMO BAR ── -->
+<div class="demo-bar">
+  <div class="demo-bar-left">
+    <div class="demo-logo">APE<strong>X</strong></div>
+    <div class="demo-session" id="demo-session-tag">New session</div>
+  </div>
+  <div class="demo-bar-right">
+    <button class="demo-btn" onclick="switchPersona()">Switch lens</button>
+    <button class="demo-btn highlight" onclick="resetDemo()">↺ New session</button>
+  </div>
+</div>
+
+<!-- ════ S1 ENTRY ════ -->
 <div id="s1" class="screen active">
-  <div class="s1-grid">
-    <div class="s1-left fadein">
-      <div class="apex-wordmark">APEX</div>
-      <div class="s1-hero">
-        <div class="s1-kicker">AI Positioning &amp; Exposure Index</div>
-        <h1 class="s1-headline">
-          AI is repricing<br>every industry.<br>
-          <em>Where does<br>yours stand?</em>
-        </h1>
-        <p class="s1-subhead">
-          15 minutes. 12 dimensions. One number that tells you exactly where your enterprise sits — and what's at stake if you don't move.
-        </p>
-        <div class="s1-stats">
-          <div><div class="s1-stat-num">12</div><div class="s1-stat-label">Value chain dimensions</div></div>
-          <div><div class="s1-stat-num">60</div><div class="s1-stat-label">Calibration signals</div></div>
-          <div><div class="s1-stat-num">₹Cr</div><div class="s1-stat-label">Quantified exposure</div></div>
-        </div>
-        <button class="s1-cta" onclick="goTo(2)">
-          Find your number <span class="s1-cta-arrow">→</span>
-        </button>
+  <div class="s1-wrap">
+    <div class="s1-left rise">
+      <div class="s1-wordmark">
+        <div class="s1-apex">APEX</div>
+        <div class="s1-tagline-small">AI Positioning<br>&amp; Exposure Index</div>
       </div>
-      <div class="s1-footer">
-        <span>India mid-market edition</span>
+      <div class="s1-hero">
+        <div class="s1-kicker"><div class="s1-kicker-line"></div>India mid-market edition · 2025</div>
+        <h1 class="s1-h1">AI is repricing<br>every industry.<br><em>Where does<br>yours stand?</em></h1>
+        <p class="s1-body">15 minutes. 12 dimensions. One number that tells you exactly where your enterprise sits — and what's on the table if you don't move.</p>
+        <div class="s1-metrics">
+          <div><div class="s1-met-n">12</div><div class="s1-met-l">Value chain<br>dimensions</div></div>
+          <div><div class="s1-met-n">60</div><div class="s1-met-l">Calibration<br>signals</div></div>
+          <div><div class="s1-met-n">₹Cr</div><div class="s1-met-l">Quantified<br>exposure</div></div>
+        </div>
+        <button class="s1-cta" onclick="goTo(2)">Find your number <span class="s1-cta-arr">→</span></button>
+      </div>
+      <div class="s1-foot">
         <span>Manufacturing · BFSI · Pharma · Retail</span>
+        <span>Powered by DRISHTI intelligence</span>
       </div>
     </div>
-
-    <div class="s1-right fadein stagger-2">
-      <div class="s1-form-title">Set the context first.</div>
-      <div class="s1-form-sub">Your APEX briefing is personalised to your organisation. Takes 30 seconds.</div>
-
-      <div class="form-field">
-        <label class="form-label">Organisation name</label>
-        <input class="form-input" id="co-name" type="text" placeholder="e.g. Precision Engineering Ltd" oninput="updateCoName()">
+    <div class="s1-right rise r3">
+      <div class="s1-form-hed">Set the context.</div>
+      <div class="s1-form-sub">Your APEX briefing is calibrated to your organisation. 30 seconds.</div>
+      <div class="fl">
+        <label class="fl-label">Organisation name</label>
+        <input class="fi" id="co-name" type="text" placeholder="e.g. Precision Industries Ltd" oninput="syncCoName()">
       </div>
-      <div class="form-field">
-        <label class="form-label">Annual revenue band</label>
-        <select class="form-select" id="co-rev">
-          <option value="">Select revenue band</option>
+      <div class="fl">
+        <label class="fl-label">Annual revenue</label>
+        <select class="fselect" id="co-rev">
           <option value="₹100–500Cr">₹100–500 Cr</option>
           <option value="₹500–1,500Cr" selected>₹500–1,500 Cr</option>
           <option value="₹1,500–5,000Cr">₹1,500–5,000 Cr</option>
           <option value="₹5,000Cr+">₹5,000 Cr+</option>
         </select>
       </div>
-      <div class="form-field">
-        <label class="form-label">Sector</label>
-        <div class="ind-select-grid">
-          <div class="ind-opt sel" id="ind-mfg" onclick="selectInd('mfg',this)">
-            <div class="ind-opt-name">Manufacturing</div>
-            <div class="ind-opt-sub">Mid-market · India</div>
+      <div class="fl">
+        <label class="fl-label">Sector</label>
+        <div class="ind-grid">
+          <div class="ind-card sel" id="ind-mfg" onclick="selInd('mfg',this)">
+            <div class="ind-card-name">Manufacturing</div>
+            <div class="ind-card-sub">Mid-market · India</div>
           </div>
-          <div class="ind-opt" onclick="void(0)" style="opacity:.38;cursor:default">
-            <div class="ind-opt-name">BFSI</div>
-            <div class="ind-opt-soon">Coming soon</div>
+          <div class="ind-card" style="opacity:.35;pointer-events:none">
+            <div class="ind-card-name">BFSI</div>
+            <div class="ind-card-sub">Coming soon</div>
           </div>
-          <div class="ind-opt" onclick="void(0)" style="opacity:.38;cursor:default">
-            <div class="ind-opt-name">Pharma</div>
-            <div class="ind-opt-soon">Coming soon</div>
+          <div class="ind-card" style="opacity:.35;pointer-events:none">
+            <div class="ind-card-name">Pharma</div>
+            <div class="ind-card-sub">Coming soon</div>
           </div>
-          <div class="ind-opt" onclick="void(0)" style="opacity:.38;cursor:default">
-            <div class="ind-opt-name">Retail</div>
-            <div class="ind-opt-soon">Coming soon</div>
+          <div class="ind-card" style="opacity:.35;pointer-events:none">
+            <div class="ind-card-name">Retail</div>
+            <div class="ind-card-sub">Coming soon</div>
           </div>
         </div>
       </div>
@@ -733,830 +824,855 @@ body{min-height:100vh;overflow-x:hidden;}
   </div>
 </div>
 
-<!-- ════ SCREEN 2 — WHO'S IN THE ROOM ════ -->
+<!-- ════ S2 PERSONA ════ -->
 <div id="s2" class="screen">
-  <div class="s2-inner fadein">
-    <div class="step-indicator">
-      <div class="step-pip done"></div>
-      <div class="step-pip active"></div>
-      <div class="step-pip"></div>
-      <div class="step-pip"></div>
-      <span class="step-label">Who's in the room?</span>
+  <div class="s2-wrap rise">
+    <div class="step-track">
+      <div class="st-pip done"></div>
+      <div class="st-active"></div>
+      <div class="st-pip"></div>
+      <div class="st-pip"></div>
+      <span class="st-lbl">Who's in the room?</span>
     </div>
-    <h2 class="s2-title">Same enterprise.<br>Different vantage point.</h2>
-    <p class="s2-sub">Your role shapes what you see. Choose the lens that fits — the calibration questions will reframe accordingly.</p>
-    <div class="persona-grid">
-      <div class="p-card" id="pc-csuite" onclick="selectPersona('csuite')">
-        <div class="p-check"><svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>
-        <div class="p-card-inner">
-          <div class="p-num">Lens 01</div>
-          <div class="p-title">C-Suite &amp;<br>Board</div>
-          <div class="p-desc">Strategy, competitive risk, capital allocation. You set the direction — this calibration tells you what's at stake.</div>
+    <h2 class="s2-h">Same enterprise.<br>Different vantage point.</h2>
+    <p class="s2-sub">Your role shapes what you see. Choose the lens that fits — every calibration question will reframe to your perspective.</p>
+    <div class="p-grid">
+      <div class="pc" id="pc-csuite" onclick="selPersona('csuite')">
+        <div class="pc-check"><svg width="10" height="8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>
+        <div class="pc-inner">
+          <div class="pc-n">Lens 01</div>
+          <div class="pc-title">C-Suite &amp; Board</div>
+          <div class="pc-desc">Strategy, competitive risk, capital allocation. You set the direction. This calibration tells you what's at stake and where to place your bets.</div>
         </div>
       </div>
-      <div class="p-card" id="pc-ops" onclick="selectPersona('ops')">
-        <div class="p-check"><svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>
-        <div class="p-card-inner">
-          <div class="p-num">Lens 02</div>
-          <div class="p-title">Operations &amp;<br>Functional Head</div>
-          <div class="p-desc">Process efficiency, team capability, day-to-day execution. You know where the friction is. This surfaces the opportunity.</div>
+      <div class="pc" id="pc-ops" onclick="selPersona('ops')">
+        <div class="pc-check"><svg width="10" height="8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>
+        <div class="pc-inner">
+          <div class="pc-n">Lens 02</div>
+          <div class="pc-title">Operations &amp; Functional Head</div>
+          <div class="pc-desc">Process efficiency, team capability, day-to-day execution. You know where the friction is. This surfaces where AI moves the needle.</div>
         </div>
       </div>
-      <div class="p-card" id="pc-it" onclick="selectPersona('it')">
-        <div class="p-check"><svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>
-        <div class="p-card-inner">
-          <div class="p-num">Lens 03</div>
-          <div class="p-title">IT &amp; Digital<br>Leader</div>
-          <div class="p-desc">Systems, data readiness, AI platform capability. You know what's actually possible — this maps where you can go.</div>
+      <div class="pc" id="pc-it" onclick="selPersona('it')">
+        <div class="pc-check"><svg width="10" height="8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>
+        <div class="pc-inner">
+          <div class="pc-n">Lens 03</div>
+          <div class="pc-title">IT &amp; Digital Lead</div>
+          <div class="pc-desc">Systems, data readiness, AI platform capability. You know what's possible. This maps the path from your current foundation to enterprise AI.</div>
         </div>
       </div>
     </div>
-    <div class="nav-row">
-      <button class="btn-ghost" onclick="goTo(1)">← Back</button>
-      <button class="btn-dark" id="s2-next" onclick="goTo(3)" disabled>Begin calibration →</button>
+    <div class="navrow">
+      <button class="btn-out" onclick="goTo(1)">← Back</button>
+      <button class="btn-solid" id="s2-nxt" onclick="goTo(3)" disabled>Begin calibration →</button>
     </div>
   </div>
 </div>
 
-<!-- ════ SCREEN 3 — CALIBRATION ════ -->
+<!-- ════ S3 CALIBRATION ════ -->
 <div id="s3" class="screen">
-  <div class="cal-top">
-    <div class="cal-brand">APE<strong>X</strong> &nbsp;Calibration</div>
-    <div class="cal-tags">
-      <span class="ctag ctag-g" id="ctag-ind">Manufacturing</span>
-      <span class="ctag ctag-a" id="ctag-co">Your organisation</span>
-      <span class="ctag ctag-b" id="ctag-persona">C-Suite lens</span>
-      <div class="cal-prog-wrap">
-        <span class="cal-prog-txt" id="cal-prog-txt">0 / 60</span>
-        <div class="cal-prog-bar"><div class="cal-prog-fill" id="cal-prog-fill" style="width:0%"></div></div>
+  <div class="cal-bar">
+    <div class="cal-brand">APE<em>X</em> Calibration</div>
+    <div class="cal-meta">
+      <span class="ctag ctag-g" id="ct-ind">Manufacturing</span>
+      <span class="ctag ctag-a" id="ct-co">Organisation</span>
+      <span class="ctag ctag-d" id="ct-p">C-Suite lens</span>
+      <div class="cal-prog">
+        <span class="cal-prog-n" id="cp-n">0 / 60</span>
+        <div class="cal-prog-bar"><div class="cal-prog-fill" id="cp-fill" style="width:0%"></div></div>
       </div>
     </div>
   </div>
   <div class="cal-body">
     <div class="cal-left">
-      <div class="fn-spine" id="fn-spine"></div>
-      <div class="cal-q-area" id="cal-q-area"></div>
-      <div class="cal-nav">
-        <div>
-          <div class="fn-nav-label" id="fn-nav-label">Function 1 of 12</div>
-          <div class="fn-progress-row" id="fn-progress-row"></div>
+      <div class="fn-rail" id="fn-rail"></div>
+      <div class="cal-qa" id="cal-qa"></div>
+      <div class="cal-nav-bar">
+        <div class="cal-nav-info">
+          <div class="cal-nav-fn" id="cnav-fn">Function 1 of 12</div>
+          <div class="cal-nav-pips" id="cnav-pips"></div>
         </div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn-ghost" id="btn-prev" onclick="prevFn()" style="padding:8px 16px;font-size:12px;">← Prev</button>
-          <button class="btn-dark" id="btn-next-fn" onclick="nextFn()" style="padding:8px 16px;font-size:12px;">Next →</button>
+        <div class="cal-nav-btns">
+          <button class="cal-nav-btn" id="btn-prev" onclick="prevFn()">← Prev</button>
+          <button class="cal-nav-btn primary" id="btn-nxt" onclick="nextFn()">Next →</button>
         </div>
       </div>
     </div>
     <div class="cal-right" id="cal-right">
-      <div class="signal-banner" id="signal-banner"></div>
-      <div class="map-card">
-        <div class="map-card-hed">Live signal map</div>
-        <div class="map-card-sub">Your position plots as you calibrate</div>
-        <svg id="cal-svg" width="100%" viewBox="0 0 420 300" style="display:block;overflow:visible;"></svg>
-        <div style="display:flex;flex-wrap:wrap;gap:5px 12px;margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border);">
-          <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--ink3)"><svg width="16" height="6"><line x1="0" y1="3" x2="16" y2="3" stroke="#1a6b4a" stroke-width="1.5"/></svg>India 2025</div>
-          <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--ink3)"><svg width="16" height="6"><line x1="0" y1="3" x2="16" y2="3" stroke="#d4521e" stroke-width="1.5" stroke-dasharray="3 2"/></svg>India 2028</div>
-          <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--ink3)"><svg width="12" height="12"><circle cx="6" cy="6" r="4" fill="none" stroke="#999" stroke-width="1" stroke-dasharray="2 2"/></svg>Benchmark</div>
-          <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--ink3)"><svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="#1a6b4a" opacity=".8"/></svg>Your position</div>
+      <div class="sig-banner" id="sig-banner">
+        <div class="sig-banner-head">Drishti · Emerging signal</div>
+        <span id="sig-banner-txt"></span>
+      </div>
+      <div class="map-shell">
+        <div class="map-hed">Live signal map</div>
+        <div class="map-sub">Your position plots as you calibrate · dashed = India benchmark</div>
+        <svg id="cal-svg" width="100%" viewBox="0 0 420 295" style="display:block;overflow:visible;"></svg>
+        <div class="map-leg">
+          <div class="ml"><svg width="16" height="6"><line x1="0" y1="3" x2="16" y2="3" stroke="#1a6b4a" stroke-width="1.5"/></svg>India 2025</div>
+          <div class="ml"><svg width="16" height="6"><line x1="0" y1="3" x2="16" y2="3" stroke="#c4521e" stroke-width="1.5" stroke-dasharray="3 2"/></svg>India 2028</div>
+          <div class="ml"><svg width="12" height="12"><circle cx="6" cy="6" r="4" fill="none" stroke="#999" stroke-width="1" stroke-dasharray="2 2"/></svg>Benchmark</div>
+          <div class="ml"><svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="#1a6b4a" opacity=".85"/></svg>Your position</div>
         </div>
       </div>
-      <div class="sum-card">
-        <div class="sum-head">Position vs benchmark</div>
+      <div class="sum-shell">
+        <div class="sum-hed">Position vs benchmark</div>
         <div id="sum-rows"></div>
       </div>
-      <button class="briefing-btn" id="briefing-btn" onclick="goTo(4)">View your APEX briefing →</button>
+      <button class="view-briefing" id="view-briefing" onclick="goTo(4)">View your APEX briefing →</button>
     </div>
   </div>
 </div>
 
-<!-- ════ SCREEN 4 — APEX BRIEFING ════ -->
+<!-- ════ S4 APEX BRIEFING ════ -->
 <div id="s4" class="screen">
-  <div class="briefing-wrap fadein">
-
-    <div class="briefing-top">
+  <div class="briefing-outer">
+    <div class="brf-hero rise">
       <div>
-        <div class="briefing-brand">APEX Briefing</div>
-        <div class="briefing-title" id="b-title">AI Readiness<br><em>Assessment</em></div>
-        <div class="briefing-co" id="b-co"></div>
+        <div class="brf-brand">APEX Briefing · India mid-market manufacturing</div>
+        <div class="brf-title" id="b-title">AI Readiness<br><em>Assessment</em></div>
+        <div class="brf-meta" id="b-meta"></div>
       </div>
-      <div class="briefing-date-col">
-        <div class="briefing-apex-num" id="b-score-big">—</div>
-        <div class="briefing-apex-label">APEX number</div>
-        <div class="briefing-apex-bench">India avg: 41 &nbsp;·&nbsp; Leaders: 68</div>
+      <div class="apex-num-hero">
+        <div class="apex-num-big" id="b-num">—</div>
+        <div class="apex-num-label">APEX number</div>
+        <div class="apex-num-bench">India avg 41 · Leaders 68</div>
+        <div class="apex-num-bar"><div class="apex-num-bar-fill" id="b-num-bar" style="width:0%"></div></div>
       </div>
     </div>
 
-    <!-- Executive summary -->
-    <div class="exec-summary fadein stagger-1">
+    <div class="exec-band rise r1">
       <div class="exec-eyebrow">Executive summary</div>
-      <div class="exec-text" id="b-exec"></div>
+      <div class="exec-body" id="b-exec"></div>
     </div>
 
-    <!-- Signal metrics -->
-    <div class="signal-grid fadein stagger-2" id="b-sig-grid"></div>
+    <div class="sig-cards rise r2" id="b-sig-cards"></div>
 
-    <!-- Red zones + opportunity -->
-    <div class="fadein stagger-3">
-      <div class="section-title-row"><div class="section-title">Red zones &amp; opportunity signals</div></div>
-      <div class="section-subtitle">Each value chain function mapped against your calibrated position and the India benchmark. Sorted by gap urgency.</div>
-      <div class="fn-signal-list" id="b-fn-list"></div>
+    <div class="rise r3">
+      <div class="sec-hd"><div class="sec-title">Red zones &amp; opportunity signals</div></div>
+      <div class="sec-sub">Each dimension mapped against your calibrated position and the India benchmark. Sorted by gap urgency — your highest-risk areas first.</div>
+      <div class="fn-breakdown" id="b-fn-breakdown"></div>
     </div>
 
-    <!-- 90-day signal map -->
-    <div class="fadein stagger-4">
-      <div class="section-title-row"><div class="section-title">Your 90-day signal map</div></div>
-      <div class="section-subtitle">Functions positioned by disruption urgency and your readiness gap. This is your sequencing guide.</div>
-      <div class="signal-map-outer">
-        <div class="signal-map-label-row">Higher disruption →</div>
-        <div class="signal-map-y-wrap">
-          <div class="signal-map-y-label">Larger gap →</div>
-          <div class="signal-map-grid">
-            <div class="sig-quad" style="background:#fffaf8;">
-              <div class="sig-quad-head"><span class="sig-quad-icon">📋</span><span class="sig-quad-title" style="color:var(--amber)">Plan now</span></div>
-              <div class="sig-quad-desc">Lower disruption, behind benchmark. Build now before urgency rises.</div>
-              <div class="sig-quad-chips" id="sq-plan"></div>
+    <div class="rise r4">
+      <div class="sec-hd"><div class="sec-title">Your 90-day signal map</div></div>
+      <div class="sec-sub">Functions sequenced by disruption urgency and readiness gap. This is your action sequence, not just a diagnosis.</div>
+      <div class="smap-outer">
+        <div class="smap-x-label">← Lower disruption &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Higher disruption →</div>
+        <div class="smap-ywrap">
+          <div class="smap-ylabel">← On track &nbsp; Larger gap →</div>
+          <div class="smap-grid">
+            <div class="sq" style="background:#fdfaf7;">
+              <div class="sq-hd"><span class="sq-icon">📋</span><span class="sq-title" style="color:var(--amber)">Plan now</span></div>
+              <div class="sq-desc">Lower disruption, behind benchmark. Build before urgency rises.</div>
+              <div class="sq-chips" id="sq-plan"></div>
             </div>
-            <div class="sig-quad" style="background:#fdf7f7;">
-              <div class="sig-quad-head"><span class="sig-quad-icon">🔴</span><span class="sig-quad-title" style="color:var(--red)">Red zone — act now</span></div>
-              <div class="sig-quad-desc">High disruption, significant gap. Your burning platform.</div>
-              <div class="sig-quad-chips" id="sq-act"></div>
+            <div class="sq" style="background:#fdf7f7;">
+              <div class="sq-hd"><span class="sq-icon">🔴</span><span class="sq-title" style="color:var(--red)">Red zone — act now</span></div>
+              <div class="sq-desc">High disruption, significant gap. Your burning platform.</div>
+              <div class="sq-chips" id="sq-act"></div>
             </div>
-            <div class="sig-quad" style="background:#f8fbf9;">
-              <div class="sig-quad-head"><span class="sig-quad-icon">✓</span><span class="sig-quad-title" style="color:var(--accent)">Hold &amp; monitor</span></div>
-              <div class="sig-quad-desc">Lower disruption, on track. Protect what you've built.</div>
-              <div class="sig-quad-chips" id="sq-hold"></div>
+            <div class="sq" style="background:#f8fcf9;">
+              <div class="sq-hd"><span class="sq-icon">✓</span><span class="sq-title" style="color:var(--green)">Hold &amp; monitor</span></div>
+              <div class="sq-desc">Lower disruption, on track. Protect what's been built.</div>
+              <div class="sq-chips" id="sq-hold"></div>
             </div>
-            <div class="sig-quad" style="background:#f8fdf9;">
-              <div class="sig-quad-head"><span class="sig-quad-icon">🚀</span><span class="sig-quad-title" style="color:var(--accent-m)">Widen the gap</span></div>
-              <div class="sig-quad-desc">High disruption, at or ahead of benchmark. Accelerate and extend.</div>
-              <div class="sig-quad-chips" id="sq-widen"></div>
+            <div class="sq" style="background:#f7fcf9;">
+              <div class="sq-hd"><span class="sq-icon">🚀</span><span class="sq-title" style="color:var(--green2)">Widen the gap</span></div>
+              <div class="sq-desc">High disruption, at or ahead of benchmark. Accelerate and extend.</div>
+              <div class="sq-chips" id="sq-widen"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Opportunity window -->
-    <div class="opp-window fadein stagger-5">
+    <div class="opp-win rise r5">
       <div class="opp-eyebrow">The opportunity window</div>
-      <div class="opp-title" id="b-opp-title"></div>
-      <div class="opp-body" id="b-opp-body"></div>
+      <div class="opp-title" id="b-opp-t"></div>
+      <div class="opp-body" id="b-opp-b"></div>
       <div class="opp-moves" id="b-opp-moves"></div>
     </div>
 
-    <!-- Monday morning -->
-    <div class="monday fadein">
+    <div class="monday rise r6">
       <div class="monday-title">What to do on Monday morning</div>
       <div class="monday-sub">Three moves that will change the conversation in your organisation within 30 days.</div>
       <div class="monday-steps" id="b-monday"></div>
     </div>
 
-    <div class="briefing-footer">
-      <div class="briefing-footer-brand">APEX · AI Positioning &amp; Exposure Index · India</div>
-      <div class="footer-actions">
-        <button class="btn-ghost" onclick="goTo(3)">← Back to calibration</button>
-        <button class="btn-green" onclick="window.print()">Export briefing</button>
+    <div class="brf-foot">
+      <div class="brf-foot-brand">APEX · AI Positioning &amp; Exposure Index · India &nbsp;·&nbsp; Powered by DRISHTI</div>
+      <div class="brf-foot-actions">
+        <button class="btn-out" onclick="goTo(3)">← Back to calibration</button>
+        <button class="btn-accent" onclick="window.print()">Export briefing</button>
+        <button class="btn-solid" onclick="openDrishti()" style="background:var(--drishti);">Ask DRISHTI</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ════ DRISHTI ════ -->
+<button class="drishti-trigger" id="drishti-btn" onclick="toggleDrishti()" title="Ask DRISHTI">
+  <span style="font-family:var(--fd);font-size:16px;font-style:italic;">D</span>
+  <span class="drishti-badge" id="d-badge">1</span>
+</button>
+
+<div class="drishti-panel" id="drishti-panel">
+  <div class="drishti-header">
+    <div class="drishti-name">DRISHTI</div>
+    <div class="drishti-title">दृष्टि · Your AI Readiness Advisor</div>
+    <div class="drishti-context" id="d-context">Calibrated to your organisation · Manufacturing · India mid-market</div>
+  </div>
+  <div class="drishti-msgs" id="d-msgs"></div>
+  <div class="drishti-prompts" id="d-prompts">
+    <div class="d-prompt-label">Ask DRISHTI</div>
+  </div>
+  <div class="drishti-input-row">
+    <input class="d-input" id="d-input" placeholder="Ask anything about your APEX results…" onkeydown="if(event.key==='Enter')sendMsg()">
+    <button class="d-send" id="d-send-btn" onclick="sendMsg()">Send</button>
   </div>
 </div>
 
 <div class="tip" id="tip"></div>
 
 <script>
-// ─────────────────────────────────────────────────
-// DATA
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────
+// CORE DATA
+// ─────────────────────────────────────────
 const FN=[
-  {id:'ops',  name:'Operations',       short:'Ops',    type:'primary',d:.88,bm:.32,v:.95,w:.22,col:'#1a6b4a',
-   sub:'Plant efficiency, predictive maintenance, quality AI',
-   insight:'SAP PM sensor data is untapped. Predictive maintenance AI delivers 8–12% OEE lift within 18 months.',
-   valueRange:'₹15–40Cr'},
-  {id:'qual', name:'Quality',          short:'Quality',type:'primary',d:.85,bm:.28,v:.80,w:.30,col:'#1a6b4a',
-   sub:'Defect detection, SPC, inspection automation',
-   insight:'Vision AI on inspection lines is the fastest ROI play for China+1 export qualification.',
-   valueRange:'₹8–22Cr'},
-  {id:'sc',   name:'Supply chain',     short:'S.Chain',type:'primary',d:.80,bm:.38,v:.85,w:.35,col:'#1a6b4a',
-   sub:'Demand sensing, S&OP AI, inventory optimisation',
-   insight:'SAP APO/IBP data is the foundation. AI-augmented S&OP reduces inventory holding 15–20%.',
-   valueRange:'₹12–30Cr'},
-  {id:'log',  name:'Logistics',        short:'Logistics',type:'primary',d:.72,bm:.35,v:.70,w:.38,col:'#1a6b4a',
-   sub:'Route optimisation, freight intelligence, last-mile AI',
-   insight:'Route and freight AI on SAP TM data delivers 6–10% logistics cost reduction within 12 months.',
-   valueRange:'₹5–14Cr'},
-  {id:'sal',  name:'Sales',            short:'Sales',  type:'primary',d:.75,bm:.48,v:.78,w:.40,col:'#1a6b4a',
-   sub:'AI-assisted quoting, demand forecasting, CRM intelligence',
-   insight:'AI-assisted quoting and demand sensing improves order conversion 12–18% in B2B manufacturing.',
-   valueRange:'₹10–28Cr'},
-  {id:'eng',  name:'Engineering',      short:'Engg',   type:'primary',d:.82,bm:.30,v:.88,w:.45,col:'#1a6b4a',
-   sub:'Generative design, simulation AI, digital twin',
-   insight:'Generative design and simulation AI reduces new product development cycle by 20–35%.',
-   valueRange:'₹8–20Cr'},
-  {id:'proc', name:'Procurement',      short:'Procure',type:'support',d:.68,bm:.42,v:.72,w:.35,col:'#4a3fb5',
-   sub:'Spend intelligence, supplier risk AI, contract analytics',
-   insight:'SAP MM spend analytics deployable in weeks. 3–5% spend reduction typical in year one.',
-   valueRange:'₹6–16Cr'},
-  {id:'fin',  name:'Finance',          short:'Finance',type:'support',d:.65,bm:.45,v:.68,w:.38,col:'#4a3fb5',
-   sub:'Anomaly detection, GST automation, AI forecasting',
-   insight:'GST reconciliation AI alone recovers 0.5–1 FTE in finance bandwidth monthly.',
-   valueRange:'₹4–10Cr'},
-  {id:'hr',   name:'HR & workforce',   short:'HR',     type:'support',d:.52,bm:.28,v:.48,w:.58,col:'#4a3fb5',
-   sub:'Attrition prediction, AI screening, shift optimisation',
-   insight:'Predictive attrition on SAP HCM significantly reduces replacement cost for skilled roles.',
-   valueRange:'₹3–8Cr'},
-  {id:'it',   name:'IT & infra',       short:'IT',     type:'support',d:.70,bm:.50,v:.60,w:.45,col:'#4a3fb5',
-   sub:'AIOps, SAP intelligent automation, security AI',
-   insight:'AIOps on a constrained IT team reduces incident response time by 40–60%.',
-   valueRange:'₹4–10Cr'},
-  {id:'ehs',  name:'EHS & compliance', short:'EHS',    type:'support',d:.58,bm:.22,v:.55,w:.42,col:'#4a3fb5',
-   sub:'Safety prediction, BRSR AI, ESG data automation',
-   insight:'BRSR AI reporting is a compliance necessity — early movers have structural advantage.',
-   valueRange:'₹2–6Cr'},
-  {id:'str',  name:'Strategy',         short:'Strategy',type:'support',d:.70,bm:.20,v:.82,w:.62,col:'#4a3fb5',
-   sub:'Executive AI literacy, scenario AI, competitive intelligence',
-   insight:'Executive AI literacy is the single highest-leverage unlock. Without it, every AI investment underperforms.',
-   valueRange:'₹20–60Cr'},
+  {id:'ops',  name:'Operations',      short:'Ops',     type:'primary',d:.88,bm:.32,v:.95,w:.22,col:'#1a6b4a',
+   sub:'Plant efficiency · predictive maintenance · quality AI',
+   insight:'SAP PM sensor data is largely untapped. Predictive maintenance AI delivers 8–12% OEE lift within 18 months.',valueRange:'₹15–40Cr'},
+  {id:'qual', name:'Quality',         short:'Quality', type:'primary',d:.85,bm:.28,v:.80,w:.30,col:'#1a6b4a',
+   sub:'Defect detection · SPC automation · vision inspection',
+   insight:'Vision AI on inspection lines is the fastest ROI play for China+1 export qualification.',valueRange:'₹8–22Cr'},
+  {id:'sc',   name:'Supply chain',    short:'S.Chain', type:'primary',d:.80,bm:.38,v:.85,w:.35,col:'#1a6b4a',
+   sub:'Demand sensing · S&OP AI · inventory optimisation',
+   insight:'SAP APO/IBP data is the foundation. AI-augmented S&OP reduces inventory holding by 15–20%.',valueRange:'₹12–30Cr'},
+  {id:'log',  name:'Logistics',       short:'Logistics',type:'primary',d:.72,bm:.35,v:.70,w:.38,col:'#1a6b4a',
+   sub:'Route optimisation · freight intelligence · last-mile AI',
+   insight:'Route and freight AI on SAP TM data delivers 6–10% logistics cost reduction within 12 months.',valueRange:'₹5–14Cr'},
+  {id:'sal',  name:'Sales',           short:'Sales',   type:'primary',d:.75,bm:.48,v:.78,w:.40,col:'#1a6b4a',
+   sub:'AI-assisted quoting · demand forecasting · CRM intelligence',
+   insight:'AI-assisted quoting and demand sensing improves B2B order conversion by 12–18%.',valueRange:'₹10–28Cr'},
+  {id:'eng',  name:'Engineering',     short:'Engg',    type:'primary',d:.82,bm:.30,v:.88,w:.45,col:'#1a6b4a',
+   sub:'Generative design · simulation AI · digital twin',
+   insight:'Generative design and simulation AI reduces new product development cycles by 20–35%.',valueRange:'₹8–20Cr'},
+  {id:'proc', name:'Procurement',     short:'Procure', type:'support',d:.68,bm:.42,v:.72,w:.35,col:'#4a3fb5',
+   sub:'Spend intelligence · supplier risk AI · contract analytics',
+   insight:'SAP MM spend analytics deployable in weeks. 3–5% spend reduction typical in year one.',valueRange:'₹6–16Cr'},
+  {id:'fin',  name:'Finance',         short:'Finance', type:'support',d:.65,bm:.45,v:.68,w:.38,col:'#4a3fb5',
+   sub:'Anomaly detection · GST automation · AI forecasting',
+   insight:'GST reconciliation AI alone recovers 0.5–1 FTE in finance bandwidth monthly.',valueRange:'₹4–10Cr'},
+  {id:'hr',   name:'HR & workforce',  short:'HR',      type:'support',d:.52,bm:.28,v:.48,w:.58,col:'#4a3fb5',
+   sub:'Attrition prediction · AI screening · shift optimisation',
+   insight:'Predictive attrition on SAP HCM significantly reduces replacement cost for skilled roles.',valueRange:'₹3–8Cr'},
+  {id:'it',   name:'IT & infra',      short:'IT',      type:'support',d:.70,bm:.50,v:.60,w:.45,col:'#4a3fb5',
+   sub:'AIOps · SAP intelligent automation · security AI',
+   insight:'AIOps on a constrained IT team reduces incident response time by 40–60%.',valueRange:'₹4–10Cr'},
+  {id:'ehs',  name:'EHS & compliance',short:'EHS',     type:'support',d:.58,bm:.22,v:.55,w:.42,col:'#4a3fb5',
+   sub:'Safety prediction · BRSR AI · ESG data automation',
+   insight:'BRSR AI reporting is becoming a compliance necessity — early movers have structural advantage.',valueRange:'₹2–6Cr'},
+  {id:'str',  name:'Strategy',        short:'Strategy',type:'support',d:.70,bm:.20,v:.82,w:.62,col:'#4a3fb5',
+   sub:'Executive AI literacy · scenario AI · board readiness',
+   insight:'Executive AI literacy is the single highest-leverage unlock. Without it, every AI investment underperforms.',valueRange:'₹20–60Cr'},
 ];
 
 const QS={
   ops:[
     {csuite:'How confident are you that AI-driven automation is a strategic priority for your plant operations in the next 2 years?',ops:'To what degree are predictive maintenance and real-time OEE monitoring deployed on your production lines today?',it:'How mature is your sensor and IoT data infrastructure to support AI models on production equipment?',lo:'Not a priority',hi:'Fully committed'},
-    {csuite:'Has your board discussed the competitive risk of AI-enabled manufacturing from Chinese or global peers?',ops:'Are your operators using any AI-assisted quality or process control tools today?',it:'Do you have a unified data platform feeding operational data centrally — SAP or equivalent?',lo:'Not discussed',hi:'Central board agenda'},
-    {csuite:'Have you made capital investment toward AI or intelligent automation in the last 18 months?',ops:'How well do your current systems capture real-time production data without manual intervention?',it:'How well integrated are your OT and IT systems for data sharing?',lo:'No investment yet',hi:'Significant investment'},
-    {csuite:'How prepared is your leadership team to make ROI-based decisions on AI investments in manufacturing?',ops:'Do you have a clear view of which production bottlenecks could be solved by AI or automation?',it:'How capable is your team at deploying and maintaining ML models in a plant environment?',lo:'Not prepared',hi:'Fully capable'},
-    {csuite:'In 3 years, how much of a competitive differentiator will AI in operations be for your sector?',ops:'Have you piloted or deployed any AI use cases in operations — vision inspection, anomaly detection, scheduling AI?',it:'How mature is your OT cybersecurity posture for AI-connected environments?',lo:'Unlikely to matter',hi:'Existential differentiator'},
+    {csuite:'Has your board discussed the competitive risk of AI-enabled manufacturing from global peers?',ops:'Are your operators using any AI-assisted quality or process control tools today?',it:'Do you have a unified data platform feeding operational data centrally?',lo:'Not discussed',hi:'Central board agenda'},
+    {csuite:'Have you made capital investment toward AI or intelligent automation in the last 18 months?',ops:'How well do your systems capture real-time production data without manual intervention?',it:'How well integrated are your OT and IT systems for data sharing?',lo:'No investment yet',hi:'Significant investment'},
+    {csuite:'How prepared is your leadership team to make ROI-based decisions on AI investments?',ops:'Do you have a clear view of which production bottlenecks AI could solve?',it:'How capable is your team at deploying ML models in a plant environment?',lo:'Not prepared',hi:'Fully capable'},
+    {csuite:'In 3 years, how much of a competitive differentiator will AI in operations be for your sector?',ops:'Have you piloted or deployed any AI use cases in operations?',it:'How mature is your OT cybersecurity posture for AI-connected environments?',lo:'Unlikely to matter',hi:'Existential differentiator'},
   ],
   qual:[
-    {csuite:'How significant is product quality as a barrier to winning new export contracts — China+1 buyers, global OEMs?',ops:'Do you currently use automated vision inspection or AI-based defect detection on your lines?',it:'Is your quality data digitised and accessible for AI model training?',lo:'Not significant',hi:'Critical export barrier'},
-    {csuite:'Are quality failures and customer returns a material cost issue you are actively targeting with technology?',ops:'How systematically do you analyse defect patterns — manual analysis or AI-assisted root cause?',it:'Do you have infrastructure to run real-time computer vision models at line speed?',lo:'Not a priority',hi:'Top priority, active investment'},
-    {csuite:'Has your quality capability been formally assessed against export customer or global OEM requirements?',ops:'Are your quality team members trained in data-driven methods — SPC, DOE, AI quality tools?',it:'How mature is your QMS-to-SAP integration for full traceability?',lo:'No formal assessment',hi:'Fully certified, externally audited'},
-    {csuite:'How dependent is your quality management process on manual inspection and human judgment?',ops:'Do you track first-pass yield and scrap rates in real time across all lines?',it:'Have you evaluated AI or ML platforms specifically for quality inspection in your sector?',lo:'Entirely manual',hi:'Highly automated'},
-    {csuite:'Is AI-assisted quality a capability you plan to build internally or source from a specialist?',ops:'Do you have a roadmap for reducing quality costs through AI in the next 2 years?',it:'How capable is your team to manage data labelling and model retraining pipelines for vision AI?',lo:'No plan yet',hi:'Clear roadmap, budgeted'},
+    {csuite:'How significant is product quality as a barrier to winning new export contracts?',ops:'Do you use automated vision inspection or AI-based defect detection on your lines?',it:'Is your quality data digitised and accessible for AI model training?',lo:'Not significant',hi:'Critical export barrier'},
+    {csuite:'Are quality failures and returns a material cost issue you are actively targeting with technology?',ops:'How systematically do you analyse defect patterns — manual or AI-assisted?',it:'Do you have infrastructure to run real-time computer vision models at line speed?',lo:'Not a priority',hi:'Top priority'},
+    {csuite:'Has your quality capability been assessed against export customer requirements?',ops:'Are your quality team members trained in data-driven quality methods?',it:'How mature is your QMS-to-SAP integration for traceability?',lo:'No formal assessment',hi:'Fully certified'},
+    {csuite:'How dependent is your quality management on manual inspection and human judgment?',ops:'Do you track first-pass yield and scrap rates in real time?',it:'Have you evaluated AI platforms for quality inspection in your sector?',lo:'Entirely manual',hi:'Highly automated'},
+    {csuite:'Is AI-assisted quality a capability you plan to build internally or source from a specialist?',ops:'Do you have a roadmap for reducing quality costs through AI in the next 2 years?',it:'How capable is your team to manage data labelling pipelines for vision AI?',lo:'No plan yet',hi:'Clear roadmap, budgeted'},
   ],
   sc:[
-    {csuite:'How strategically are you addressing AI as a supply chain disruption mitigation tool?',ops:'Are you using AI or advanced analytics for demand forecasting and inventory optimisation today?',it:'How well does your SAP APO or IBP feed clean, timely data for AI planning models?',lo:'Not on the agenda',hi:'Fully embedded in strategy'},
-    {csuite:'Do you have real-time visibility of supplier risk — financial, geopolitical, capacity?',ops:'How far in advance can your planning team accurately forecast demand?',it:'Have you integrated external data — weather, logistics signals, commodity prices — into planning systems?',lo:'No real-time visibility',hi:'Proactive AI-driven visibility'},
-    {csuite:'Has your S&OP process been redesigned to incorporate AI-generated scenarios in the last 2 years?',ops:'Do your planners spend most of their time on exception management — or on data gathering?',it:'How mature is your master data quality in SAP MM and PP for AI model training?',lo:'Still traditional, manual',hi:'AI-augmented S&OP live'},
-    {csuite:'How confident are you in your supply chain resilience if a key supplier fails?',ops:'Do you have multi-tier supplier visibility beyond your direct Tier 1 suppliers?',it:'Have you evaluated supply chain AI platforms — o9, Kinaxis, SAP AI — for your environment?',lo:'Low confidence, high exposure',hi:'High resilience, tested'},
-    {csuite:'Is supply chain AI on your funded technology investment roadmap for the next financial year?',ops:'Do you have a dedicated supply chain analytics or data function?',it:'How capable is your team at building and maintaining AI demand sensing models?',lo:'Not funded or planned',hi:'Funded, in execution'},
+    {csuite:'How strategically are you using AI as a supply chain disruption mitigation tool?',ops:'Are you using AI or advanced analytics for demand forecasting and inventory optimisation today?',it:'How well does your SAP APO or IBP feed clean data for AI planning models?',lo:'Not on the agenda',hi:'Fully embedded in strategy'},
+    {csuite:'Do you have real-time visibility of supplier risk — financial, geopolitical, capacity?',ops:'How far in advance can your team accurately forecast demand?',it:'Have you integrated external signals into planning systems?',lo:'No visibility',hi:'Proactive AI-driven visibility'},
+    {csuite:'Has your S&OP process incorporated AI-generated scenarios in the last 2 years?',ops:'Do your planners spend time on exception management — or on data gathering?',it:'How mature is your master data quality in SAP MM and PP for AI?',lo:'Still traditional, manual',hi:'AI-augmented S&OP live'},
+    {csuite:'How confident are you in your supply chain resilience if a key supplier fails?',ops:'Do you have multi-tier supplier visibility beyond Tier 1?',it:'Have you evaluated supply chain AI platforms for your environment?',lo:'Low confidence',hi:'High resilience, tested'},
+    {csuite:'Is supply chain AI on your funded investment roadmap for the next financial year?',ops:'Do you have a dedicated supply chain analytics function?',it:'How capable is your team at building AI demand sensing models?',lo:'Not funded or planned',hi:'Funded, in execution'},
   ],
   log:[
-    {csuite:'Is logistics cost a strategic concern — are you losing margin or contracts due to delivery performance?',ops:'Do you use any AI-based route optimisation or dynamic scheduling for outbound distribution today?',it:'Is your logistics and transport data integrated into a central platform for analytics?',lo:'Not a concern',hi:'Critical margin and contract issue'},
-    {csuite:'How digitised is your logistics operation — still relying on phone calls and spreadsheets with 3PLs?',ops:'Do you have real-time visibility of shipments in transit, or relying on manual check-ins?',it:'Have you integrated your 3PL or fleet data into SAP or a central logistics dashboard?',lo:'Mostly manual, fragmented',hi:'Fully digitised, real-time'},
-    {csuite:'Are rising logistics costs eating into margins in a way that AI efficiency could address?',ops:'Do you track OTIF delivery performance systematically and take corrective action from the data?',it:'How mature is your capability to use ML for freight cost optimisation or carrier selection?',lo:'Not tracking OTIF',hi:'Full visibility, AI-driven decisions'},
-    {csuite:'Have you explored warehouse automation or AI-driven picking and sorting in your distribution centres?',ops:'Is your WMS integrated with SAP and feeding data for AI-assisted operations?',it:'How capable are your systems to support semi-autonomous warehouse operations?',lo:'Not explored',hi:'Actively deploying'},
-    {csuite:'Do you see last-mile delivery experience as a competitive differentiator for your customers?',ops:'Do you have dynamic delivery scheduling — can you re-route or re-prioritise in real time?',it:'Have you piloted AI for predictive ETAs or proactive delivery exception management?',lo:'Not a differentiator',hi:'Core competitive advantage'},
+    {csuite:'Is logistics cost a strategic concern — losing margin or contracts due to delivery performance?',ops:'Do you use AI-based route optimisation or dynamic scheduling for distribution today?',it:'Is your logistics data integrated into a central platform for analytics?',lo:'Not a concern',hi:'Critical margin issue'},
+    {csuite:'How digitised is your logistics operation?',ops:'Do you have real-time visibility of shipments in transit?',it:'Have you integrated 3PL or fleet data into SAP or a logistics dashboard?',lo:'Mostly manual',hi:'Fully digitised'},
+    {csuite:'Are rising logistics costs eating into margins that AI could address?',ops:'Do you track OTIF delivery performance systematically?',it:'How mature is your capability to use ML for freight cost optimisation?',lo:'Not tracking',hi:'Full visibility, AI-driven'},
+    {csuite:'Have you explored warehouse automation or AI-driven picking in distribution centres?',ops:'Is your WMS integrated with SAP for AI-assisted operations?',it:'How capable are your systems for semi-autonomous warehouse operations?',lo:'Not explored',hi:'Actively deploying'},
+    {csuite:'Do you see last-mile delivery experience as a competitive differentiator?',ops:'Do you have dynamic delivery scheduling — re-route in real time?',it:'Have you piloted AI for predictive ETAs or exception management?',lo:'Not a differentiator',hi:'Core competitive advantage'},
   ],
   sal:[
-    {csuite:'Is AI-assisted selling — smarter quoting, pipeline intelligence, customer analytics — on your commercial agenda?',ops:'Do your sales team members use CRM or AI tools to manage pipeline, pricing, or customer data today?',it:'How complete and clean is your customer and sales data in SAP SD or CRM for AI use?',lo:'Not on the agenda',hi:'Active commercial priority'},
-    {csuite:'How much revenue is at risk from poor demand forecasting — lost orders, over-commitment, under-supply?',ops:'How personalised is your commercial approach — do you tailor pricing and offers based on customer data?',it:'Have you integrated your SAP SD data with a CRM or marketing automation platform?',lo:'Not quantified',hi:'Fully understood, being addressed'},
-    {csuite:'Are you using data to identify which customers are at risk of churn or shifting to a competitor?',ops:'Do your sales managers have a data-driven view of their pipeline — or is it relationship and gut feel?',it:'How capable is your team to build or deploy customer churn prediction models?',lo:'No data-driven view',hi:'Proactive, AI-driven retention'},
-    {csuite:'Has your organisation used GenAI tools for marketing content, proposals, or customer communication?',ops:'How efficiently can your team generate quotes and proposals — hours or minutes?',it:'Have you evaluated AI-assisted CPQ tools for your sales process?',lo:'Not started',hi:'Actively using, competitive edge'},
-    {csuite:'In 3 years, do you expect your sales process to be significantly AI-augmented or remain relationship-led?',ops:'Does your commercial team see AI as an enabler or a threat to how they work?',it:'Do you have the data infrastructure to support a recommendation engine for cross-sell or upsell?',lo:'Remain relationship-led',hi:'Significantly AI-augmented'},
+    {csuite:'Is AI-assisted selling on your commercial agenda?',ops:'Do your sales team use CRM or AI tools to manage pipeline or customer data today?',it:'How complete is your customer and sales data in SAP SD or CRM for AI?',lo:'Not on the agenda',hi:'Active commercial priority'},
+    {csuite:'How much revenue is at risk from poor demand forecasting?',ops:'How personalised is your commercial approach based on customer data?',it:'Have you integrated SAP SD with a CRM or marketing automation platform?',lo:'Not quantified',hi:'Fully understood, being addressed'},
+    {csuite:'Are you using data to identify customers at risk of churn?',ops:'Do sales managers have a data-driven view of pipeline — or is it gut feel?',it:'How capable is your team to build customer churn prediction models?',lo:'No data-driven view',hi:'Proactive, AI-driven retention'},
+    {csuite:'Has your organisation used GenAI for marketing content or proposals?',ops:'How efficiently can your team generate quotes and proposals?',it:'Have you evaluated AI-assisted CPQ tools for your sales process?',lo:'Not started',hi:'Actively using'},
+    {csuite:'In 3 years, do you expect sales to be significantly AI-augmented?',ops:'Does your commercial team see AI as an enabler or a threat?',it:'Do you have infrastructure to support a recommendation engine for cross-sell?',lo:'Remain relationship-led',hi:'Significantly AI-augmented'},
   ],
   eng:[
-    {csuite:'Is product innovation speed a competitive issue — are you being outpaced by competitors in new product development?',ops:'Are your engineers using any AI-assisted design, simulation, or generative design tools today?',it:'Do you have a digital twin or simulation environment for your products or production processes?',lo:'Not an issue',hi:'Critical competitive gap'},
-    {csuite:'Is R&D investment growing — and is AI explicitly part of the R&D strategy?',ops:'How much of your engineering time is spent on manual analysis vs creative design and innovation?',it:'How mature is your PLM data for use in AI-assisted design?',lo:'Declining, no AI plan',hi:'Growing with AI roadmap'},
-    {csuite:'Have you explored AI for materials intelligence — new materials, cost substitutions, performance improvement?',ops:'Do you have a structured process for capturing and reusing engineering knowledge across projects?',it:'Have you piloted any AI tools for engineering — FEA augmentation, generative design, simulation AI?',lo:'Not explored',hi:'Actively using, clear benefit'},
-    {csuite:'How prepared is your engineering function for PLI-driven scale-up in product variants and volumes?',ops:'Can your current design-to-manufacture process handle significantly higher complexity — with AI support?',it:'How integrated are your engineering tools — CAD, CAE, PLM — with your manufacturing execution systems?',lo:'Not prepared',hi:'Fully ready and scalable'},
-    {csuite:'Is patent intelligence and competitive technology monitoring part of your innovation strategy?',ops:'Does your team have access to AI-assisted patent, literature, or materials research tools?',it:'Have you evaluated GenAI for engineering documentation, specifications, or technical writing?',lo:'Not at all',hi:'Systematic, embedded capability'},
+    {csuite:'Is product innovation speed a competitive issue — being outpaced by competitors?',ops:'Are your engineers using any AI-assisted design or simulation tools today?',it:'Do you have a digital twin or simulation environment for your products?',lo:'Not an issue',hi:'Critical competitive gap'},
+    {csuite:'Is R&D investment growing and is AI part of the R&D strategy?',ops:'How much of engineering time is spent on manual analysis vs creative design?',it:'How mature is your PLM data for AI-assisted design?',lo:'Declining, no AI plan',hi:'Growing with AI roadmap'},
+    {csuite:'Have you explored AI for materials intelligence or cost reduction?',ops:'Do you have a structured process for capturing and reusing engineering knowledge?',it:'Have you piloted AI tools for engineering — generative design, simulation AI?',lo:'Not explored',hi:'Actively using'},
+    {csuite:'How prepared is your engineering function for PLI-driven scale-up?',ops:'Can your design-to-manufacture process handle higher complexity with AI support?',it:'How integrated are your engineering tools with manufacturing execution systems?',lo:'Not prepared',hi:'Fully ready and scalable'},
+    {csuite:'Is patent intelligence and competitive technology monitoring part of your strategy?',ops:'Does your team have access to AI-assisted patent or materials research tools?',it:'Have you evaluated GenAI for engineering documentation or specifications?',lo:'Not at all',hi:'Systematic capability'},
   ],
   proc:[
-    {csuite:'Is procurement a strategic function in your business — or primarily transactional and administrative?',ops:'Do you have real-time visibility of total spend by category, supplier, and business unit?',it:'How clean and complete is your SAP MM and SRM data for spend analytics and AI use?',lo:'Primarily transactional',hi:'Fully strategic, data-driven'},
-    {csuite:'Are you losing value through maverick spend, poor contract compliance, or supplier risk events?',ops:'How systematically do you monitor supplier performance — delivery, quality, risk — across your base?',it:'Have you deployed any spend analytics or procurement AI on your SAP data?',lo:'Significant value leakage',hi:'Fully controlled, AI-monitored'},
-    {csuite:'Is supplier risk — financial stability, geopolitical exposure, single-source dependency — actively managed?',ops:'Do your category managers use data-driven market intelligence for negotiations and sourcing?',it:'How capable is your team at building supplier risk scoring models using internal and external data?',lo:'Reactive only, post-incident',hi:'Proactively managed with AI'},
-    {csuite:'Has AI-assisted contract review or supplier evaluation been explored in your procurement function?',ops:'Are your contracts stored digitally and searchable — or in files and shared drives?',it:'Have you evaluated contract AI or CLM tools for your procurement team?',lo:'Not explored',hi:'Actively deployed, measurable benefit'},
-    {csuite:'Do you see procurement AI as a margin improvement lever — not just cost savings?',ops:'Is there a roadmap for procurement digitalisation beyond the current SAP MM capability?',it:'How integrated is your procurement data with finance and supply chain for end-to-end visibility?',lo:'Cost saving only',hi:'Margin strategy, board-visible'},
+    {csuite:'Is procurement a strategic function — or primarily transactional and administrative?',ops:'Do you have real-time visibility of total spend by category and supplier?',it:'How clean is your SAP MM and SRM data for spend analytics and AI?',lo:'Primarily transactional',hi:'Fully strategic, data-driven'},
+    {csuite:'Are you losing value through maverick spend or poor contract compliance?',ops:'How systematically do you monitor supplier performance across your base?',it:'Have you deployed spend analytics or procurement AI on SAP data?',lo:'Significant value leakage',hi:'Fully controlled'},
+    {csuite:'Is supplier risk actively managed with AI intelligence?',ops:'Do category managers use data-driven market intelligence for negotiations?',it:'How capable is your team at building supplier risk scoring models?',lo:'Reactive only',hi:'Proactively managed with AI'},
+    {csuite:'Has AI-assisted contract review been explored in procurement?',ops:'Are your contracts stored digitally and searchable?',it:'Have you evaluated contract AI or CLM tools?',lo:'Not explored',hi:'Actively deployed'},
+    {csuite:'Do you see procurement AI as a margin improvement lever?',ops:'Is there a roadmap for procurement digitalisation beyond current SAP MM?',it:'How integrated is procurement data with finance and supply chain?',lo:'Cost saving only',hi:'Margin strategy, board-visible'},
   ],
   fin:[
-    {csuite:'Is finance a strategic AI partner to the business — providing forward-looking insights — or primarily a reporting function?',ops:'How much of your month-end close process is still manual and spreadsheet-dependent?',it:'How clean is your SAP FI and CO data for anomaly detection and AI forecasting models?',lo:'Primarily historical reporting',hi:'Strategic AI-powered partner'},
-    {csuite:'Are you actively addressing GST reconciliation automation — how much finance team time does it currently consume?',ops:'Do you have automated alerts for financial anomalies — unusual spend, duplicate invoices, fraud signals?',it:'Have you deployed intelligent automation on SAP FI processes — invoice matching, reconciliation?',lo:'Entirely manual, high effort',hi:'Fully automated, near-zero effort'},
-    {csuite:'How confident are you in your rolling 12-month cash flow and P&L forecasts?',ops:'Can your finance team run scenario models quickly — what-if on input costs, currency, volumes?',it:'Have you implemented SAP Analytics Cloud or equivalent for AI-augmented financial planning?',lo:'Low confidence, often wrong',hi:'AI-assisted, high accuracy'},
-    {csuite:'Are treasury and working capital management being AI-optimised — payment terms, dynamic discounting?',ops:'How well do you manage debtor risk — early identification of customers likely to delay payment?',it:'Have you explored AI for credit risk scoring or AR collections optimisation?',lo:'Not optimised, manual',hi:'AI-driven, measurable improvement'},
-    {csuite:'Is the CFO sponsoring AI initiatives in your organisation — or is AI seen as an IT topic?',ops:'Do your finance business partners have data skills to interpret AI-generated forecasts?',it:'How capable is your team to maintain and govern AI models in financial processes?',lo:'Seen as IT topic, not CFO agenda',hi:'CFO-sponsored, board-level visibility'},
+    {csuite:'Is finance a strategic AI partner — providing forward-looking insights — or primarily reporting?',ops:'How much of month-end close is still manual and spreadsheet-dependent?',it:'How clean is your SAP FI and CO data for anomaly detection and AI forecasting?',lo:'Primarily reporting',hi:'Strategic AI-powered partner'},
+    {csuite:'Are you actively addressing GST reconciliation automation?',ops:'Do you have automated alerts for financial anomalies?',it:'Have you deployed intelligent automation on SAP FI processes?',lo:'Entirely manual',hi:'Fully automated'},
+    {csuite:'How confident are you in your rolling 12-month cash flow forecasts?',ops:'Can your finance team run scenario models quickly?',it:'Have you implemented SAP Analytics Cloud for AI-augmented planning?',lo:'Low confidence',hi:'AI-assisted, high accuracy'},
+    {csuite:'Are treasury and working capital management being AI-optimised?',ops:'How well do you manage debtor risk — early identification of likely late payers?',it:'Have you explored AI for credit risk scoring or AR collections optimisation?',lo:'Not optimised',hi:'AI-driven'},
+    {csuite:'Is the CFO sponsoring AI initiatives — or is AI seen as an IT topic?',ops:'Do finance business partners have data skills to interpret AI-generated forecasts?',it:'How capable is your team to govern AI models in financial processes?',lo:'IT topic only',hi:'CFO-sponsored'},
   ],
   hr:[
-    {csuite:'Is talent acquisition and retention a material business risk — particularly for skilled manufacturing and technical roles?',ops:'Do you use any AI-assisted screening or assessment tools in your hiring process today?',it:'How clean and usable is your SAP HCM or HR system data for workforce analytics and AI?',lo:'Not a material risk',hi:'Critical, board-level risk'},
-    {csuite:'Do you have visibility of attrition risk across your workforce — who is likely to leave in the next 6 months?',ops:'Are learning and development programmes personalised to individual skill gaps and career paths?',it:'Have you deployed any predictive attrition or workforce planning AI on your HR data?',lo:'No visibility, reactive only',hi:'Predictive AI-driven, proactive'},
-    {csuite:'Is workforce productivity — output per employee — measured and optimised systematically?',ops:'Do your shift supervisors have data tools to optimise shift scheduling and task allocation?',it:'Have you explored AI-based shift optimisation or workforce scheduling tools for your plants?',lo:'Not systematically measured',hi:'Continuously optimised, data-driven'},
-    {csuite:'Is upskilling the workforce for AI and digital tools part of your strategic people agenda?',ops:'How ready is your shop-floor workforce to work alongside AI tools and automated systems?',it:'Do you have a digital literacy programme for staff working with AI-assisted systems?',lo:'Not on the people agenda',hi:'Active, funded programme'},
-    {csuite:'Is HR seen as a data-driven strategic function — or primarily compliance and administration?',ops:'Do HR business partners use data to advise line managers on people decisions?',it:'How integrated is your HR data with operations and finance for workforce cost modelling?',lo:'Compliance and admin focus',hi:'Data-driven strategic partner'},
+    {csuite:'Is talent acquisition and retention a material business risk for skilled roles?',ops:'Do you use AI-assisted screening or assessment tools in hiring?',it:'How clean is your SAP HCM data for workforce analytics and AI?',lo:'Not a material risk',hi:'Critical, board-level risk'},
+    {csuite:'Do you have visibility of attrition risk across your workforce?',ops:'Are L&D programmes personalised to individual skill gaps?',it:'Have you deployed predictive attrition AI on your HR data?',lo:'No visibility',hi:'Predictive, AI-driven'},
+    {csuite:'Is workforce productivity measured and optimised systematically?',ops:'Do shift supervisors have data tools for scheduling and task allocation?',it:'Have you explored AI-based shift optimisation tools?',lo:'Not measured',hi:'Continuously optimised'},
+    {csuite:'Is upskilling the workforce for AI part of your strategic people agenda?',ops:'How ready is your shop-floor workforce to work alongside AI systems?',it:'Do you have a digital literacy programme for staff working with AI?',lo:'Not on the agenda',hi:'Active, funded programme'},
+    {csuite:'Is HR seen as a data-driven strategic function — or primarily compliance?',ops:'Do HR business partners use data to advise line managers on people decisions?',it:'How integrated is HR data with operations and finance for workforce cost modelling?',lo:'Compliance focus',hi:'Data-driven strategic partner'},
   ],
   it:[
-    {csuite:'Is IT seen as a strategic enabler of AI and digital transformation in your business — or a cost centre?',ops:'Does IT proactively identify AI use cases in the business — or wait to be asked?',it:'How mature is your cloud infrastructure — are you running AI workloads on cloud or still fully on-premise?',lo:'Pure cost centre',hi:'Co-leading AI strategy'},
-    {csuite:'Is your SAP landscape stable and current enough to support AI extensions and integrations?',ops:'How quickly can your IT team deploy a new AI tool or integration — days, weeks, or months?',it:'How mature is your SAP BTP or equivalent integration middleware for AI use cases?',lo:'Legacy, highly constrained',hi:'Modern, AI-ready, fast'},
-    {csuite:'Is cybersecurity investment keeping pace with your growing AI and digital footprint?',ops:'Have you experienced any significant IT or OT security incidents in the last 2 years?',it:'How mature is your security operations capability — AI-assisted threat detection in place?',lo:'Lagging, known exposure',hi:'Proactive, AI-assisted SOC'},
-    {csuite:'Is your data governance — quality, ownership, access controls — strong enough to support enterprise AI?',ops:'Can business users self-serve data and reports without IT dependency for every request?',it:'How mature is your master data management and data quality programme across SAP modules?',lo:'Weak, inconsistent',hi:'Strong, enterprise-wide governance'},
-    {csuite:'Is IT leadership a co-sponsor of AI strategy at the executive level?',ops:'Do you have a clear AI technology roadmap that the business has formally endorsed?',it:'How capable is your team at evaluating, integrating, and operating AI platforms and LLM APIs?',lo:'Not at the table',hi:'Co-leading with C-suite'},
+    {csuite:'Is IT seen as a strategic enabler of AI — or a cost centre?',ops:'Does IT proactively identify AI use cases in the business?',it:'How mature is your cloud infrastructure for AI workloads?',lo:'Pure cost centre',hi:'Co-leading AI strategy'},
+    {csuite:'Is your SAP landscape stable enough to support AI extensions?',ops:'How quickly can IT deploy a new AI tool or integration?',it:'How mature is your SAP BTP or equivalent middleware for AI?',lo:'Legacy, constrained',hi:'Modern, AI-ready'},
+    {csuite:'Is cybersecurity investment keeping pace with your AI footprint?',ops:'Have you experienced significant IT or OT security incidents in the last 2 years?',it:'How mature is your security operations — AI-assisted threat detection?',lo:'Lagging',hi:'Proactive, AI-assisted'},
+    {csuite:'Is your data governance strong enough to support enterprise AI?',ops:'Can business users self-serve data without IT dependency?',it:'How mature is your master data management across SAP modules?',lo:'Weak governance',hi:'Strong, enterprise-wide'},
+    {csuite:'Is IT leadership a co-sponsor of AI strategy at the executive level?',ops:'Do you have a clear AI technology roadmap the business has endorsed?',it:'How capable is your team at evaluating and operating AI platforms and LLM APIs?',lo:'Not at the table',hi:'Co-leading with C-suite'},
   ],
   ehs:[
-    {csuite:'Is ESG reporting — BRSR compliance, Scope 1/2/3 emissions — a current or emerging business requirement from customers or investors?',ops:'Do you track safety incidents, near-misses, and leading safety indicators systematically across all sites?',it:'How digitised is your EHS data — safety records still on paper or in disconnected spreadsheets?',lo:'Not a requirement yet',hi:'Active, mandatory compliance need'},
-    {csuite:'Are export customers beginning to ask for sustainability data as a qualification criterion?',ops:'Do you have predictive safety models — identifying high-risk conditions before incidents occur?',it:'Have you evaluated any AI or ESG data platforms for automated BRSR or GRI reporting?',lo:'Not asked yet',hi:'Already embedded in contracts'},
-    {csuite:'Is sustainability and ESG performance part of your brand positioning and stakeholder communication?',ops:'Are EHS managers spending most of their time on data collection and reporting — or on actual improvement?',it:'How integrated is your EHS data with SAP for automated ESG metric calculation?',lo:'Not positioned publicly',hi:'Central to brand and investor narrative'},
-    {csuite:'Have you set science-based targets or net-zero commitments that require AI-assisted tracking?',ops:'Do you have real-time energy and emissions monitoring across your manufacturing facilities?',it:'Have you piloted any AI tools for energy optimisation or carbon footprint reduction?',lo:'No targets set',hi:'Targets set, AI roadmap in place'},
-    {csuite:'Is EHS seen as a cost of compliance or as a source of operational and reputational value?',ops:'Are safety improvements driven by data and root cause AI — or primarily by post-incident reviews?',it:'How capable is your team to build predictive safety models on your operational and sensor data?',lo:'Pure compliance cost',hi:'Strategic value and differentiator'},
+    {csuite:'Is ESG reporting — BRSR, Scope 1/2/3 — a current or emerging business requirement?',ops:'Do you track safety incidents and leading indicators systematically?',it:'How digitised is your EHS data?',lo:'Not required yet',hi:'Active compliance need'},
+    {csuite:'Are export customers asking for sustainability data as a qualification criterion?',ops:'Do you have predictive safety models — identifying risk before incidents?',it:'Have you evaluated AI or ESG platforms for automated BRSR reporting?',lo:'Not asked yet',hi:'Already embedded in contracts'},
+    {csuite:'Is sustainability part of your brand positioning and stakeholder communication?',ops:'Are EHS managers spending time on data collection — or on improvement?',it:'How integrated is EHS data with SAP for automated ESG metrics?',lo:'Not positioned publicly',hi:'Central to brand narrative'},
+    {csuite:'Have you set science-based targets that require AI-assisted tracking?',ops:'Do you have real-time energy and emissions monitoring?',it:'Have you piloted AI tools for energy optimisation or carbon footprint reduction?',lo:'No targets set',hi:'Committed with AI roadmap'},
+    {csuite:'Is EHS seen as compliance cost or as a source of operational and reputational value?',ops:'Are safety improvements driven by data and root cause AI?',it:'How capable is your team to build predictive safety models?',lo:'Compliance cost only',hi:'Strategic value driver'},
   ],
   str:[
-    {csuite:'How clearly has your leadership team defined an enterprise AI vision — not just for IT, but for the whole business?',ops:'Are functional leaders using AI tools personally — or leaving AI entirely to the IT team?',it:'Does your organisation have a formal AI governance framework — policies, ethics, data use?',lo:'No articulated AI vision',hi:'Clear, board-endorsed enterprise AI vision'},
-    {csuite:'Has your board discussed AI as a competitive and strategic risk — not just as a technology investment?',ops:'Are business cases for AI investments evaluated with the same rigour as capital expenditure?',it:'Do you have an AI Centre of Excellence — even a small, early-stage one?',lo:'Not discussed at board level',hi:'Board-level standing agenda item'},
-    {csuite:'Do you benchmark your AI maturity against peers and competitors — formally or through intelligence gathering?',ops:'Are your functional heads able to articulate AI use cases relevant to their own function?',it:'Do you have a multi-year AI technology roadmap aligned to business strategy?',lo:'No benchmarking',hi:'Systematic, regular benchmarking'},
-    {csuite:'What share of your annual budget is allocated to AI and digital transformation?',ops:'Is there an internal AI champion or Chief Digital Officer driving the agenda with authority?',it:'How mature is your AI talent strategy — building internally, buying externally, or partnering?',lo:'No dedicated allocation',hi:'Greater than 1% of revenue, growing'},
-    {csuite:'In 3 years, will AI be a source of competitive advantage for your business — or simply table stakes?',ops:'Are you learning from AI pilots at speed — fail fast, scale what works?',it:'How ready is your organisation culture and change management capability for AI transformation at scale?',lo:'Table stakes, everyone will have it',hi:'Core, defensible competitive advantage'},
+    {csuite:'How clearly has your leadership team defined an enterprise AI vision — beyond just IT?',ops:'Are functional leaders using AI tools personally — or leaving AI to IT?',it:'Does your organisation have a formal AI governance framework?',lo:'No articulated vision',hi:'Clear, board-endorsed AI vision'},
+    {csuite:'Has your board discussed AI as a competitive and strategic risk?',ops:'Are AI investment business cases evaluated with the same rigour as capex?',it:'Do you have an AI Centre of Excellence — even early-stage?',lo:'Not discussed at board',hi:'Board-level standing agenda item'},
+    {csuite:'Do you benchmark your AI maturity against peers and competitors?',ops:'Are your functional heads able to articulate AI use cases in their domain?',it:'Do you have a multi-year AI technology roadmap aligned to business strategy?',lo:'No benchmarking',hi:'Systematic, regular benchmarking'},
+    {csuite:'What share of annual budget is allocated to AI and digital transformation?',ops:'Is there an internal AI champion driving the agenda with authority?',it:'How mature is your AI talent strategy — build, buy or partner?',lo:'No dedicated allocation',hi:'Greater than 1% of revenue'},
+    {csuite:'In 3 years, will AI be a competitive advantage or just table stakes?',ops:'Are you learning from AI pilots at speed — fail fast, scale what works?',it:'How ready is your culture and change management capability for AI at scale?',lo:'Table stakes only',hi:'Core, defensible advantage'},
   ],
 };
 
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────
 // STATE
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────
 let coName='Your organisation', coRev='₹500–1,500Cr', industry='mfg', persona='csuite';
 let answers={}, curFn=0;
+let dOpen=false, dMsgHistory=[];
 
-// ─────────────────────────────────────────────────
-// NAVIGATION
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────
+// NAV
+// ─────────────────────────────────────────
 function goTo(n){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  const s=document.getElementById('s'+n);
-  s.classList.add('active');
-  if(n===3){initCal();}
-  if(n===4){buildReport();}
+  document.getElementById('s'+n).classList.add('active');
+  window.scrollTo(0,0);
+  if(n===3)initCal();
+  if(n===4){buildReport();setTimeout(()=>triggerDrishtiWelcome(),1200);}
+}
+function resetDemo(){
+  answers={};curFn=0;dMsgHistory=[];
+  document.getElementById('d-msgs').innerHTML='';
+  document.getElementById('d-badge').style.display='flex';
+  document.getElementById('co-name').value='';
+  coName='Your organisation';
+  document.getElementById('ct-co').textContent='Organisation';
+  document.getElementById('demo-session-tag').textContent='New session';
+  selPersona('csuite',true);
+  goTo(1);
+}
+function switchPersona(){
+  const order=['csuite','ops','it'];
+  const idx=order.indexOf(persona);
+  const next=order[(idx+1)%3];
+  selPersona(next);
+  const lbl={csuite:'C-Suite lens',ops:'Ops lens',it:'IT lens'};
+  showToast('Switched to '+lbl[next]);
+}
+function showToast(msg){
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--ink);color:#f6f5f0;padding:8px 18px;border-radius:6px;font-size:12px;z-index:9999;transition:opacity .3s;';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2000);
 }
 
-// ─────────────────────────────────────────────────
-// SCREEN 1
-// ─────────────────────────────────────────────────
-function updateCoName(){
+// ─────────────────────────────────────────
+// S1
+// ─────────────────────────────────────────
+function syncCoName(){
   const v=document.getElementById('co-name').value.trim();
   coName=v||'Your organisation';
-  document.getElementById('ctag-co').textContent=coName;
+  document.getElementById('ct-co').textContent=coName.length>18?coName.slice(0,16)+'…':coName;
+  document.getElementById('demo-session-tag').textContent=coName;
 }
-function selectInd(id,el){
+function selInd(id,el){
   industry=id;
-  document.querySelectorAll('.ind-opt').forEach(e=>e.classList.remove('sel'));
+  document.querySelectorAll('.ind-card').forEach(c=>c.classList.remove('sel'));
   el.classList.add('sel');
 }
 
-// ─────────────────────────────────────────────────
-// SCREEN 2
-// ─────────────────────────────────────────────────
-function selectPersona(p){
+// ─────────────────────────────────────────
+// S2
+// ─────────────────────────────────────────
+function selPersona(p, silent){
   persona=p;
-  document.querySelectorAll('.p-card').forEach(c=>c.classList.remove('sel'));
-  document.getElementById('pc-'+p).classList.add('sel');
-  document.getElementById('s2-next').disabled=false;
+  document.querySelectorAll('.pc').forEach(c=>c.classList.remove('sel'));
+  const el=document.getElementById('pc-'+p);
+  if(el)el.classList.add('sel');
+  document.getElementById('s2-nxt').disabled=false;
   const lbl={csuite:'C-Suite lens',ops:'Operational lens',it:'Technology lens'};
-  document.getElementById('ctag-persona').textContent=lbl[p];
+  document.getElementById('ct-p').textContent=lbl[p];
+  if(!silent && document.getElementById('s3').classList.contains('active')){
+    renderFn(curFn);
+  }
 }
 
-// ─────────────────────────────────────────────────
-// SCREEN 3 — CALIBRATION
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────
+// S3
+// ─────────────────────────────────────────
 function initCal(){
   const cn=document.getElementById('co-name').value.trim();
-  if(cn) coName=cn;
+  if(cn){coName=cn;document.getElementById('demo-session-tag').textContent=cn;}
   coRev=document.getElementById('co-rev').value||'₹500–1,500Cr';
-  document.getElementById('ctag-co').textContent=coName;
-  buildSpine();
-  renderFn(curFn);
-  renderCalMap();
-  buildSummary();
+  document.getElementById('ct-co').textContent=coName.length>18?coName.slice(0,16)+'…':coName;
+  buildRail();renderFn(curFn);renderMap();buildSummary();
 }
-
-function buildSpine(){
-  const spine=document.getElementById('fn-spine');
-  spine.innerHTML='';
+function buildRail(){
+  const r=document.getElementById('fn-rail');r.innerHTML='';
   FN.forEach((f,i)=>{
     const d=document.createElement('div');
-    const m=getMaturity(f.id);
-    d.className='fn-pip'+(i===curFn?' active':'')+(m!==null?' done':'');
-    d.onclick=()=>{curFn=i;renderFn(i);updateSpine();};
-    d.innerHTML=`<div class="fn-pip-dot"></div><span>${f.short}</span>`;
-    spine.appendChild(d);
+    const m=getM(f.id);
+    d.className='fn-tab'+(i===curFn?' act':'')+(m!==null&&i!==curFn?' done':'');
+    d.onclick=()=>{curFn=i;renderFn(i);updateRail();};
+    d.innerHTML=`<div class="fn-tab-dot"></div><span>${f.short}</span>`;
+    r.appendChild(d);
   });
 }
-function updateSpine(){
-  document.querySelectorAll('.fn-pip').forEach((p,i)=>{
-    p.classList.toggle('active',i===curFn);
-    const m=getMaturity(FN[i].id);
-    p.classList.toggle('done',m!==null&&i!==curFn);
+function updateRail(){
+  document.querySelectorAll('.fn-tab').forEach((t,i)=>{
+    t.classList.toggle('act',i===curFn);
+    const m=getM(FN[i].id);
+    t.classList.toggle('done',m!==null&&i!==curFn);
   });
 }
-
 function renderFn(idx){
-  const f=FN[idx];
-  const qs=QS[f.id];
-  const area=document.getElementById('cal-q-area');
-  const pLens={csuite:'C-Suite strategic lens',ops:'Operational lens',it:'Technology lens'}[persona];
-
-  let html=`
-    <div class="cal-fn-eyebrow">
-      <div class="cal-fn-dot" style="background:${f.col}"></div>
-      ${f.type==='primary'?'Primary value chain':'Support function'} &nbsp;·&nbsp; ${idx+1} of ${FN.length}
-    </div>
-    <div class="cal-fn-title">${f.name}</div>
-    <div class="cal-fn-sub">${f.sub}</div>`;
-
+  const f=FN[idx],qs=QS[f.id];
+  const area=document.getElementById('cal-qa');
+  const lensLbl={csuite:'C-Suite strategic lens',ops:'Operational lens',it:'Technology lens'}[persona];
+  let h=`<div class="fn-eyebrow"><div class="fn-eyebrow-dot" style="background:${f.col}"></div>${f.type==='primary'?'Primary value chain':'Support function'} · ${idx+1} of ${FN.length}</div>
+  <div class="fn-title">${f.name}</div>
+  <div class="fn-desc">${f.sub}</div>`;
   qs.forEach((q,i)=>{
     const key=f.id+'_'+i;
     const pq=q[persona]||q.csuite;
-    html+=`
-      <div class="q-item" id="qi-${key}">
-        <div class="q-lens-tag">${pLens} · Signal ${i+1} of 5</div>
-        <div class="q-text">${pq}</div>
-        <div class="scale-wrap">
-          <div class="scale-btns">
-            ${[1,2,3,4,5].map(v=>`<button class="scale-btn${answers[key]===v?' sel':''}" data-v="${v}" onclick="setAns('${f.id}',${i},${v},'${key}')">${v}</button>`).join('')}
-          </div>
-          <div class="scale-ends">
-            <span class="scale-end">${q.lo}</span>
-            <span class="scale-end">${q.hi}</span>
-          </div>
-        </div>
-      </div>`;
+    h+=`<div class="qi" id="qi-${key}">
+      <div class="qi-lens">${lensLbl} · Signal ${i+1} of 5</div>
+      <div class="qi-text">${pq}</div>
+      <div class="sbtns">${[1,2,3,4,5].map(v=>`<button class="sbtn${answers[key]===v?' sel':''}" data-v="${v}" onclick="setA('${f.id}',${i},${v},'${key}')">${v}</button>`).join('')}</div>
+      <div class="scale-ends"><span class="scale-end">${q.lo}</span><span class="scale-end">${q.hi}</span></div>
+    </div>`;
   });
-  area.innerHTML=html;
-  area.scrollTop=0;
-  updateNavRow(idx);
-  updateSignalBanner();
+  area.innerHTML=h;area.scrollTop=0;
+  updateNavBar(idx);
 }
+function updateNavBar(idx){
+  document.getElementById('cnav-fn').textContent=`${FN[idx].name} · ${idx+1} of ${FN.length}`;
+  document.getElementById('btn-prev').style.opacity=idx===0?'0.35':'1';
+  document.getElementById('btn-nxt').textContent=idx===FN.length-1?'See briefing →':'Next →';
+  const row=document.getElementById('cnav-pips');
+  row.innerHTML=FN.map((_,i)=>`<div class="nav-pip${i===idx?' act':getM(FN[i].id)!==null?' done':''}"></div>`).join('');
+}
+function nextFn(){if(curFn===FN.length-1){goTo(4);return;}curFn++;updateRail();renderFn(curFn);}
+function prevFn(){if(curFn===0)return;curFn--;updateRail();renderFn(curFn);}
 
-function updateNavRow(idx){
-  document.getElementById('fn-nav-label').textContent=`${FN[idx].name} · ${idx+1} of ${FN.length}`;
-  document.getElementById('btn-prev').style.opacity=idx===0?'0.3':'1';
-  document.getElementById('btn-next-fn').textContent=idx===FN.length-1?'See briefing →':'Next →';
-  // progress pips
-  const row=document.getElementById('fn-progress-row');
-  row.innerHTML=FN.map((_,i)=>`<div class="fn-prog-pip${i===idx?' active':getMaturity(FN[i].id)!==null?' done':''}"></div>`).join('');
-}
-
-function nextFn(){
-  if(curFn===FN.length-1){goTo(4);return;}
-  curFn++;updateSpine();renderFn(curFn);
-}
-function prevFn(){
-  if(curFn===0)return;
-  curFn--;updateSpine();renderFn(curFn);
-}
-
-function setAns(fid,idx,val,key){
+function setA(fid,idx,val,key){
   answers[key]=val;
   const qi=document.getElementById('qi-'+key);
-  if(qi){
-    qi.querySelectorAll('.scale-btn').forEach(btn=>{
-      const v=parseInt(btn.dataset.v);
-      btn.classList.toggle('sel',v===val);
-    });
-  }
-  updateProgress();
-  renderCalMap();
-  buildSummary();
-  checkBriefingReady();
-  updateSignalBanner();
-  updateNavRow(curFn);
-  updateSpine();
+  if(qi) qi.querySelectorAll('.sbtn').forEach(b=>b.classList.toggle('sel',parseInt(b.dataset.v)===val));
+  updateProgress();renderMap();buildSummary();checkReady();updateSigBanner();updateNavBar(curFn);updateRail();
 }
-
 function updateProgress(){
-  const total=FN.length*5, done=Object.keys(answers).length;
-  document.getElementById('cal-prog-txt').textContent=done+' / '+total;
-  document.getElementById('cal-prog-fill').style.width=Math.round(done/total*100)+'%';
+  const tot=FN.length*5,done=Object.keys(answers).length;
+  document.getElementById('cp-n').textContent=done+' / '+tot;
+  document.getElementById('cp-fill').style.width=Math.round(done/tot*100)+'%';
 }
-
-function checkBriefingReady(){
-  const total=FN.length*5, done=Object.keys(answers).length;
-  const btn=document.getElementById('briefing-btn');
-  const pct=done/total;
-  if(pct>=0.4){
-    btn.classList.add('ready');
-    btn.textContent=`View your APEX briefing (${Math.round(pct*100)}% calibrated) →`;
-  }
+function checkReady(){
+  const tot=FN.length*5,done=Object.keys(answers).length,pct=done/tot;
+  const btn=document.getElementById('view-briefing');
+  if(pct>=0.4){btn.classList.add('ready');btn.textContent=`View your APEX briefing (${Math.round(pct*100)}% calibrated) →`;}
 }
-
-function updateSignalBanner(){
-  const done=FN.filter(f=>getMaturity(f.id)!==null);
-  if(done.length<2){document.getElementById('signal-banner').classList.remove('show');return;}
-  const worst=done.filter(f=>{const m=getMaturity(f.id);return f.bm-m>0.2;}).sort((a,b)=>b.d-a.d);
-  const best=done.filter(f=>{const m=getMaturity(f.id);return m>=f.bm;});
+function updateSigBanner(){
+  const done=FN.filter(f=>getM(f.id)!==null);
+  if(done.length<2){document.getElementById('sig-banner').classList.remove('show');return;}
+  const worst=done.filter(f=>{const m=getM(f.id);return f.bm-m>0.2&&f.d>=.75;}).sort((a,b)=>b.d-a.d);
+  const best=done.filter(f=>{const m=getM(f.id);return m>=f.bm;});
+  if(!worst.length&&!best.length){document.getElementById('sig-banner').classList.remove('show');return;}
   let msg='';
-  if(worst.length) msg+=`<strong>Emerging signal:</strong> ${worst[0].name} shows a significant gap to benchmark — high disruption potential in this area.`;
-  if(best.length) msg+=` ${best[0].name} is tracking at or above India benchmark — a genuine strength.`;
-  if(msg){
-    const b=document.getElementById('signal-banner');
-    b.innerHTML=msg;b.classList.add('show');
-  }
+  if(worst.length)msg+=`<strong>${worst[0].name}</strong> shows a significant gap to India benchmark — with ${Math.round(worst[0].d*100)}% disruption potential, this is a priority signal.`;
+  if(best.length)msg+=(msg?' ':'')+'<strong>'+best.map(f=>f.name).join(', ')+'</strong>'+(best.length>1?' are':' is')+' tracking at or ahead of India benchmark.';
+  document.getElementById('sig-banner-txt').innerHTML=msg;
+  document.getElementById('sig-banner').classList.add('show');
 }
 
-// ─────────────────────────────────────────────────
-// SCORING
-// ─────────────────────────────────────────────────
-function getMaturity(fid){
-  const qs=QS[fid];if(!qs)return null;
-  let sum=0,count=0;
-  qs.forEach((q,i)=>{const k=fid+'_'+i;if(answers[k]!==undefined){sum+=answers[k];count++;}});
-  if(count===0)return null;
-  return(sum/count-1)/4;
-}
-function overallScore(){
-  let sum=0,count=0;
-  FN.forEach(f=>{const m=getMaturity(f.id);if(m!==null){sum+=m;count++;}});
-  if(count===0)return 32;
-  return Math.round((sum/count)*100);
-}
-function gapCls(m,bm){
-  const g=bm-m;
-  if(g>0.25)return'chip-red';
-  if(g>0.08)return'chip-amber';
-  if(g>=0)return'chip-green';
-  return'chip-blue';
-}
-function wfCol(w){return w<.35?'#1a6b4a':w<.50?'#7a4800':'#8c1f1f';}
-
-// ─────────────────────────────────────────────────
-// LIVE MAP (screen 3)
-// ─────────────────────────────────────────────────
-const MP={l:52,r:14,t:14,b:38};
-const MW=420,MH=300,MPW=MW-MP.l-MP.r,MPH=MH-MP.t-MP.b;
-function mpx(v){return MP.l+v*MPW;}
-function mpy(v){return MP.t+(1-v)*MPH;}
-function mrs(v){return 5+v*10;}
+// ─────────────────────────────────────────
+// MAP
+// ─────────────────────────────────────────
+const MP={l:52,r:14,t:12,b:38};
+const MW=420,MH=295,MPW=MW-MP.l-MP.r,MPH=MH-MP.t-MP.b;
+function mpx(v){return MP.l+v*MPW;} function mpy(v){return MP.t+(1-v)*MPH;}
+function mrs(v){return 5+v*10;} function wfc(w){return w<.35?'#0e4430':w<.50?'#6b3d00':'#7a1a1a';}
 const B25=[[0,.06],[.25,.15],[.50,.28],[.70,.40],[.88,.52],[1,.58]];
 const B28=[[0,.18],[.25,.38],[.50,.58],[.70,.74],[.88,.86],[1,.93]];
-function catmull(pts,px,py){
-  if(pts.length<2)return'';
+function cm(pts,px,py){
   let d=`M${px(pts[0][0])},${py(pts[0][1])}`;
   for(let i=0;i<pts.length-1;i++){
     const p0=pts[Math.max(i-1,0)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(i+2,pts.length-1)];
-    const cp1x=px(p1[0])+(px(p2[0])-px(p0[0]))/6,cp1y=py(p1[1])+(py(p2[1])-py(p0[1]))/6;
-    const cp2x=px(p2[0])-(px(p3[0])-px(p1[0]))/6,cp2y=py(p2[1])-(py(p3[1])-py(p1[1]))/6;
-    d+=` C${cp1x},${cp1y} ${cp2x},${cp2y} ${px(p2[0])},${py(p2[1])}`;
+    const c1x=px(p1[0])+(px(p2[0])-px(p0[0]))/6,c1y=py(p1[1])+(py(p2[1])-py(p0[1]))/6;
+    const c2x=px(p2[0])-(px(p3[0])-px(p1[0]))/6,c2y=py(p2[1])-(py(p3[1])-py(p1[1]))/6;
+    d+=` C${c1x},${c1y} ${c2x},${c2y} ${px(p2[0])},${py(p2[1])}`;
   }
   return d;
 }
-function benchY(pts,xv){
+function bY(pts,x){
   for(let i=0;i<pts.length-1;i++){
-    if(xv>=pts[i][0]&&xv<=pts[i+1][0]){
-      const t=(xv-pts[i][0])/(pts[i+1][0]-pts[i][0]);
-      return pts[i][1]+(pts[i+1][1]-pts[i][1])*t;
-    }
+    if(x>=pts[i][0]&&x<=pts[i+1][0]){const t=(x-pts[i][0])/(pts[i+1][0]-pts[i][0]);return pts[i][1]+(pts[i+1][1]-pts[i][1])*t;}
   }
   return pts[pts.length-1][1];
 }
-
-function renderCalMap(){
-  const svg=document.getElementById('cal-svg');
-  svg.innerHTML='';
+function renderMap(){
+  const svg=document.getElementById('cal-svg');svg.innerHTML='';
   const ns='http://www.w3.org/2000/svg';
-  function el(tag,attrs,p){const e=document.createElementNS(ns,tag);for(const[k,v] of Object.entries(attrs))e.setAttribute(k,v);(p||svg).appendChild(e);return e;}
+  function el(tag,a,p){const e=document.createElementNS(ns,tag);for(const[k,v] of Object.entries(a))e.setAttribute(k,v);(p||svg).appendChild(e);return e;}
   [0,.25,.5,.75,1].forEach(v=>{
-    el('line',{x1:mpx(v),y1:MP.t,x2:mpx(v),y2:MP.t+MPH,stroke:'rgba(100,100,90,.09)','stroke-width':'0.5'});
-    el('line',{x1:MP.l,y1:mpy(v),x2:MP.l+MPW,y2:mpy(v),stroke:'rgba(100,100,90,.09)','stroke-width':'0.5'});
+    el('line',{x1:mpx(v),y1:MP.t,x2:mpx(v),y2:MP.t+MPH,stroke:'rgba(100,100,90,.08)','stroke-width':'0.5'});
+    el('line',{x1:MP.l,y1:mpy(v),x2:MP.l+MPW,y2:mpy(v),stroke:'rgba(100,100,90,.08)','stroke-width':'0.5'});
   });
-  el('line',{x1:MP.l,y1:MP.t+MPH,x2:MP.l+MPW,y2:MP.t+MPH,stroke:'rgba(100,100,90,.25)','stroke-width':'0.5'});
-  el('line',{x1:MP.l,y1:MP.t,x2:MP.l,y2:MP.t+MPH,stroke:'rgba(100,100,90,.25)','stroke-width':'0.5'});
-  const xl=['Incr.','Effic.','Trans.','Disrupt.','Exist.'];
-  [0,.25,.5,.75,1].forEach((v,i)=>{el('text',{x:mpx(v),y:MP.t+MPH+11,'text-anchor':'middle','font-size':'7.5',fill:'#9e9c96'}).textContent=xl[i];});
-  const yl=['Unaware','Exploring','Adopting','Scaling','Optimised'];
-  [0,.25,.5,.75,1].forEach((v,i)=>{el('text',{x:MP.l-3,y:mpy(v)+3,'text-anchor':'end','font-size':'7.5',fill:'#9e9c96'}).textContent=yl[i];});
+  el('line',{x1:MP.l,y1:MP.t+MPH,x2:MP.l+MPW,y2:MP.t+MPH,stroke:'rgba(100,100,90,.22)','stroke-width':'0.5'});
+  el('line',{x1:MP.l,y1:MP.t,x2:MP.l,y2:MP.t+MPH,stroke:'rgba(100,100,90,.22)','stroke-width':'0.5'});
+  ['Incr.','Effic.','Trans.','Disrupt.','Exist.'].forEach((l,i)=>{el('text',{x:mpx(i*.25),y:MP.t+MPH+11,'text-anchor':'middle','font-size':'7.5',fill:'#96948e'}).textContent=l;});
+  ['Unaware','Exploring','Adopting','Scaling','Optimised'].forEach((l,i)=>{el('text',{x:MP.l-3,y:mpy(i*.25)+3,'text-anchor':'end','font-size':'7.5',fill:'#96948e'}).textContent=l;});
   const defs=el('defs',{});
-  const mk=el('marker',{id:'arr',viewBox:'0 0 10 10',refX:'8',refY:'5',markerWidth:'5',markerHeight:'5',orient:'auto-start-reverse'},defs);
-  el('path',{d:'M2 1L8 5L2 9',fill:'none',stroke:'rgba(140,31,31,.5)','stroke-width':'1.5','stroke-linecap':'round'},mk);
-  el('path',{d:catmull(B25,mpx,mpy),fill:'none',stroke:'#1a6b4a','stroke-width':'1.5',opacity:'.6'});
-  el('path',{d:catmull(B28,mpx,mpy),fill:'none',stroke:'#d4521e','stroke-width':'1.5','stroke-dasharray':'4 3',opacity:'.6'});
+  const mk=el('marker',{id:'marr',viewBox:'0 0 10 10',refX:'8',refY:'5',markerWidth:'5',markerHeight:'5',orient:'auto-start-reverse'},defs);
+  el('path',{d:'M2 1L8 5L2 9',fill:'none',stroke:'rgba(122,26,26,.45)','stroke-width':'1.5','stroke-linecap':'round'},mk);
+  el('path',{d:cm(B25,mpx,mpy),fill:'none',stroke:'#1a6b4a','stroke-width':'1.5',opacity:'.6'});
+  el('path',{d:cm(B28,mpx,mpy),fill:'none',stroke:'#c4521e','stroke-width':'1.5','stroke-dasharray':'4 3',opacity:'.6'});
   FN.forEach(f=>{
-    const m=getMaturity(f.id);
-    const r=mrs(f.v);
+    const m=getM(f.id),r=mrs(f.v);
     const bcx=mpx(f.d),bcy=mpy(f.bm);
-    el('circle',{cx:bcx,cy:bcy,r,fill:'none',stroke:'#999','stroke-width':'0.8','stroke-dasharray':'2 2',opacity:'.4'});
-    el('text',{x:bcx,y:bcy+3,'text-anchor':'middle','font-size':'6',fill:'#aaa89f',opacity:'.6','pointer-events':'none'}).textContent=f.short;
+    el('circle',{cx:bcx,cy:bcy,r,fill:'none',stroke:'#999','stroke-width':'0.8','stroke-dasharray':'2 2',opacity:'.38'});
+    el('text',{x:bcx,y:bcy+3,'text-anchor':'middle','font-size':'6',fill:'#c4c2ba',opacity:'.7','pointer-events':'none'}).textContent=f.short;
     if(m!==null){
       const cx=mpx(f.d),cy=mpy(m);
-      if(f.bm>m+0.05) el('line',{x1:cx,y1:cy-r-1,x2:bcx,y2:bcy+r+1,stroke:'rgba(140,31,31,.25)','stroke-width':'1','stroke-dasharray':'2 2','marker-end':'url(#arr)'});
+      if(f.bm>m+0.05)el('line',{x1:cx,y1:cy-r-1,x2:bcx,y2:bcy+r+1,stroke:'rgba(122,26,26,.22)','stroke-width':'1','stroke-dasharray':'2 2','marker-end':'url(#marr)'});
       const g=el('g',{cursor:'pointer'});
-      el('circle',{cx,cy,r,fill:wfCol(f.w),opacity:'.85',stroke:f.col,'stroke-width':'1.5'},g);
+      el('circle',{cx,cy,r,fill:wfc(f.w),opacity:'.88',stroke:f.col,'stroke-width':'1.5'},g);
       el('text',{x:cx,y:cy+2.5,'text-anchor':'middle','font-size':'6','font-weight':'500',fill:'#fff','pointer-events':'none'},g).textContent=f.short;
       g.addEventListener('mouseenter',e=>showTip(e,f,m));
       g.addEventListener('mousemove',e=>moveTip(e));
-      g.addEventListener('mouseleave',hideTip);
+      g.addEventListener('mouseleave',()=>document.getElementById('tip').style.display='none');
     }
   });
 }
 function showTip(e,f,m){
-  const gap=f.bm-m;
-  const t=document.getElementById('tip');
-  t.innerHTML=`<div class="tip-name">${f.name}</div>
-    <div class="trow"><span>Your position</span><span class="tval">${Math.round(m*100)}%</span></div>
-    <div class="trow"><span>India benchmark</span><span class="tval">${Math.round(f.bm*100)}%</span></div>
-    <div class="trow"><span>Gap</span><span class="tval">${gap>0?'+'+Math.round(gap*100)+'pp':Math.round(Math.abs(gap)*100)+'pp ahead'}</span></div>`;
+  const g=f.bm-m,t=document.getElementById('tip');
+  t.innerHTML=`<div class="tip-nm">${f.name}</div>
+    <div class="tr"><span>Your position</span><span class="tv">${Math.round(m*100)}%</span></div>
+    <div class="tr"><span>India 2025 benchmark</span><span class="tv">${Math.round(f.bm*100)}%</span></div>
+    <div class="tr"><span>Gap</span><span class="tv">${g>0?'+'+Math.round(g*100)+'pp behind':Math.round(Math.abs(g)*100)+'pp ahead'}</span></div>`;
   t.style.display='block';moveTip(e);
 }
 function moveTip(e){
   const t=document.getElementById('tip');
   let lx=e.clientX+12,ly=e.clientY-40;
-  if(lx+205>window.innerWidth)lx=e.clientX-215;
+  if(lx+200>window.innerWidth)lx=e.clientX-210;
   t.style.left=lx+'px';t.style.top=ly+'px';
 }
-function hideTip(){document.getElementById('tip').style.display='none';}
-
 function buildSummary(){
-  const rows=document.getElementById('sum-rows');
-  rows.innerHTML='';
+  const rows=document.getElementById('sum-rows');rows.innerHTML='';
   FN.forEach(f=>{
-    const m=getMaturity(f.id);
-    const gap=m!==null?f.bm-m:null;
-    const cls=m!==null?gapCls(m,f.bm):'';
-    const d=document.createElement('div');
-    d.className='sum-row';
-    d.innerHTML=`<div class="sum-fn">${f.name}</div>
-      <div class="sum-bar-bg"><div class="sum-bar-fill" style="width:${m!==null?Math.round(m*100):0}%;background:${m!==null?wfCol(f.w):'transparent'}"></div></div>
-      <div class="sum-val">${m!==null?Math.round(m*100)+'%':'—'}</div>
-      ${gap!==null?`<span class="gap-pip ${cls}">${gap>0.01?Math.round(gap*100)+'pp':'✓'}</span>`:'<span style="font-size:9px;color:var(--ink4)">—</span>'}`;
+    const m=getM(f.id),gap=m!==null?f.bm-m:null;
+    const cls=m!==null?gCls(m,f.bm):'';
+    const d=document.createElement('div');d.className='sum-row';
+    d.innerHTML=`<div class="sum-fn-n">${f.name}</div>
+      <div class="sum-bg"><div class="sum-fill" style="width:${m!==null?Math.round(m*100):0}%;background:${m!==null?wfc(f.w):'transparent'}"></div></div>
+      <div class="sum-v">${m!==null?Math.round(m*100)+'%':'—'}</div>
+      ${gap!==null?`<span class="sum-gap ${cls}">${gap>0.01?Math.round(gap*100)+'pp':'✓'}</span>`:'<span style="font-size:9px;color:var(--ink4)">—</span>'}`;
     rows.appendChild(d);
   });
 }
 
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────
+// SCORING
+// ─────────────────────────────────────────
+function getM(fid){
+  const qs=QS[fid];if(!qs)return null;
+  let s=0,c=0;
+  qs.forEach((q,i)=>{const k=fid+'_'+i;if(answers[k]!==undefined){s+=answers[k];c++;}});
+  return c===0?null:(s/c-1)/4;
+}
+function overallScore(){
+  let s=0,c=0;FN.forEach(f=>{const m=getM(f.id);if(m!==null){s+=m;c++;}});
+  return c===0?32:Math.round((s/c)*100);
+}
+function gCls(m,bm){
+  const g=bm-m;
+  if(g>0.25)return'chip-red';if(g>0.08)return'chip-amber';
+  if(g>=0)return'chip-green';return'chip-blue';
+}
+
+// ─────────────────────────────────────────
 // REPORT
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────
 function buildReport(){
-  const score=overallScore();
+  const sc=overallScore();
   const pLbl={csuite:'C-Suite · Strategic lens',ops:'Operations · Functional lens',it:'IT · Technology lens'};
-
-  // header
-  document.getElementById('b-score-big').textContent=score;
-  document.getElementById('b-score-big').style.color=score<35?'#8c1f1f':score<50?'#7a4800':score<65?'#0f4c35':'#0f4c35';
-  document.getElementById('b-title').innerHTML=`${coName}<br><em>${scoreLabel(score)}</em>`;
-  document.getElementById('b-co').innerHTML=`<span>⚙️ Manufacturing</span><span>🇮🇳 India mid-market · ${coRev}</span><span>👤 ${pLbl[persona]}</span><span>📅 ${new Date().toLocaleDateString('en-IN',{month:'long',year:'numeric'})}</span>`;
-
-  // exec summary
-  document.getElementById('b-exec').innerHTML=genExecSummary(score);
-
-  // signal metrics
-  buildSignalGrid(score);
-
-  // fn list
-  buildFnList();
-
-  // 90-day signal map
-  buildSignalMap();
-
-  // opp window
-  buildOppWindow(score);
-
-  // monday
-  buildMonday(score);
+  const scColor=sc<35?'var(--red)':sc<50?'var(--amber)':sc<65?'var(--green2)':'var(--green)';
+  document.getElementById('b-num').textContent=sc;
+  document.getElementById('b-num').style.color=scColor;
+  document.getElementById('b-num-bar').style.width=sc+'%';
+  document.getElementById('b-num-bar').style.background=scColor;
+  const slbl=sc<35?'Early stage — significant exposure':sc<42?'Developing — gaps are closeable':sc<58?'Progressing — above India average':'Leading — competitive position';
+  const coN=coName==='Your organisation'?'Your organisation':coName;
+  document.getElementById('b-title').innerHTML=`${coN}<br><em>${slbl}</em>`;
+  document.getElementById('b-meta').innerHTML=`<span>⚙️ Manufacturing</span><span>🇮🇳 India mid-market · ${coRev}</span><span>👤 ${pLbl[persona]}</span><span>📅 ${new Date().toLocaleDateString('en-IN',{month:'long',year:'numeric'})}</span>`;
+  document.getElementById('b-exec').innerHTML=genExec(sc);
+  buildSigCards(sc);buildFnBreakdown();buildSignalMap();buildOppWindow(sc);buildMonday(sc);
 }
-
-function scoreLabel(s){
-  if(s<30)return'Early stage — significant exposure';
-  if(s<42)return'Developing — gaps are closeable';
-  if(s<58)return'Progressing — above India average';
-  return'Leading — competitive position';
+function genExec(sc){
+  const answered=FN.filter(f=>getM(f.id)!==null);
+  const burners=answered.filter(f=>{const m=getM(f.id);return f.d>=.80&&f.bm-m>0.15;}).sort((a,b)=>b.d-a.d);
+  const leaders=answered.filter(f=>{const m=getM(f.id);return m>=f.bm;});
+  const gaps=answered.filter(f=>{const m=getM(f.id);return f.bm-m>0.20;});
+  const coN=coName==='Your organisation'?'This organisation':coName;
+  let t=`<strong>${coN} scores ${sc} on the APEX index</strong> — `;
+  if(sc<35)t+=`placing it in the early stage cohort where AI is largely exploratory and not yet deployed systematically across the value chain. `;
+  else if(sc<42)t+=`placing it slightly below the India mid-market average of 41, indicating AI initiatives exist but deployment remains fragmented. `;
+  else if(sc<58)t+=`placing it above the India mid-market average of 41, with credible AI foundations in several functions. `;
+  else t+=`placing it in the leading tier, ahead of most India mid-market peers, with structured AI deployment across multiple functions. `;
+  if(burners.length)t+=`The most urgent strategic signal is <strong>${burners.map(f=>f.name).join(' and ')}</strong> — high disruption potential combined with a significant maturity gap creates compounding competitive exposure. `;
+  if(gaps.length)t+=`Across <strong>${gaps.length} dimension${gaps.length>1?'s':''}</strong>, the organisation is more than 20 points behind the India benchmark. These are not capability gaps — they are strategic risks with a time horizon. `;
+  if(leaders.length)t+=`<strong>${leaders.map(f=>f.name).join(', ')}</strong> track at or ahead of benchmark — a genuine asset that should be extended, not merely maintained.`;
+  return t;
 }
-
-function genExecSummary(score){
-  const answered=FN.filter(f=>getMaturity(f.id)!==null);
-  const burners=answered.filter(f=>{const m=getMaturity(f.id);return f.d>=.80&&f.bm-m>0.15;}).sort((a,b)=>b.d-a.d);
-  const leaders=answered.filter(f=>{const m=getMaturity(f.id);return m>=f.bm;});
-  const gaps=answered.filter(f=>{const m=getMaturity(f.id);return f.bm-m>0.20;});
-
-  let txt=`<strong>${coName} scores ${score} on the APEX index</strong> — `;
-  if(score<35) txt+=`placing it in the early stage cohort where AI is exploratory and not yet systematically deployed across the value chain. `;
-  else if(score<42) txt+=`placing it slightly below the India mid-market average of 41, indicating that AI initiatives exist but deployment remains fragmented. `;
-  else if(score<58) txt+=`placing it above the India mid-market average of 41, with credible AI foundations in several functions. `;
-  else txt+=`placing it in the leading tier, ahead of most India mid-market peers, with structured AI deployment across multiple value chain functions. `;
-
-  if(burners.length) txt+=`The most urgent strategic signal is <strong>${burners.map(f=>f.name).join(' and ')}</strong> — high disruption potential combined with a significant maturity gap creates compounding competitive exposure. `;
-  if(gaps.length) txt+=`Across <strong>${gaps.length} dimension${gaps.length>1?'s':''}</strong>, the organisation is more than 20 points behind the India benchmark. These are not capability gaps — they are strategic risks. `;
-  if(leaders.length) txt+=`<strong>${leaders.map(f=>f.name).join(', ')}</strong> track at or ahead of benchmark — a genuine asset that should be extended, not merely maintained.`;
-  return txt;
-}
-
-function buildSignalGrid(score){
-  const grid=document.getElementById('b-sig-grid');
-  grid.innerHTML='';
-  const mult=score<35?1.5:score<50?1.2:0.9;
-  const totalLow=Math.round(FN.reduce((s,f)=>s+(f.v*28),0)*mult);
-  const totalHigh=Math.round(totalLow*2.6);
-  const burners=FN.filter(f=>{const m=getMaturity(f.id);return m!==null&&f.d>=.80&&f.bm-m>0.15;});
-  const redLow=Math.round(totalLow*.42), redHigh=Math.round(totalHigh*.42);
-  const qwLow=Math.round(totalLow*.22), qwHigh=Math.round(totalHigh*.22);
-
+function buildSigCards(sc){
+  const g=document.getElementById('b-sig-cards');g.innerHTML='';
+  const mult=sc<35?1.5:sc<50?1.2:0.9;
+  const tL=Math.round(FN.reduce((s,f)=>s+(f.v*28),0)*mult);
+  const tH=Math.round(tL*2.6);
+  const burners=FN.filter(f=>{const m=getM(f.id);return m!==null&&f.d>=.80&&f.bm-m>0.15;});
   const items=[
-    {label:'Value at stake — 3 years',val:`₹${totalLow}–${totalHigh}Cr`,sub:'Total across value chain',cls:'urgent'},
-    {label:'Red zone exposure',val:`₹${redLow}–${redHigh}Cr`,sub:`${burners.length} high-risk function${burners.length!==1?'s':''}`,cls:'urgent'},
-    {label:'Quick win opportunity',val:`₹${qwLow}–${qwHigh}Cr`,sub:'SAP-ready, 12-month payback',cls:'opportunity'},
-    {label:'APEX number',val:score+'/100',sub:`India avg 41 · Leaders 68`,cls:''},
+    {label:'Value at stake — 3 years',val:`₹${tL}–${tH}Cr`,sub:'Total across value chain',cls:'urgent'},
+    {label:'Red zone exposure',val:`₹${Math.round(tL*.42)}–${Math.round(tH*.42)}Cr`,sub:`${burners.length||'—'} high-risk dimension${burners.length!==1?'s':''}`,cls:'urgent'},
+    {label:'Quick win opportunity',val:`₹${Math.round(tL*.22)}–${Math.round(tH*.22)}Cr`,sub:'SAP-ready · 12-month payback',cls:'opp'},
+    {label:'APEX number',val:sc+'/100',sub:'India avg 41 · Leaders 68',cls:''},
   ];
-  items.forEach(item=>{
-    const d=document.createElement('div');
-    d.className='sig-card '+(item.cls||'');
-    d.innerHTML=`<div class="sig-label">${item.label}</div><div class="sig-val">${item.val}</div><div class="sig-sub">${item.sub}</div>`;
-    grid.appendChild(d);
-  });
+  items.forEach(i=>{const d=document.createElement('div');d.className='sc-card '+(i.cls||'');d.innerHTML=`<div class="sc-lbl">${i.label}</div><div class="sc-val">${i.val}</div><div class="sc-sub">${i.sub}</div>`;g.appendChild(d);});
 }
-
-function buildFnList(){
-  const list=document.getElementById('b-fn-list');
-  list.innerHTML='';
-  const sorted=[...FN].sort((a,b)=>{
-    const ma=getMaturity(a.id)??-1,mb=getMaturity(b.id)??-1;
-    return(b.bm-mb)-(a.bm-ma);
-  });
+function buildFnBreakdown(){
+  const w=document.getElementById('b-fn-breakdown');w.innerHTML='';
+  const sorted=[...FN].sort((a,b)=>{const ma=getM(a.id)??-1,mb=getM(b.id)??-1;return(b.bm-mb)-(a.bm-ma);});
   sorted.forEach(f=>{
-    const m=getMaturity(f.id);
-    const gap=m!==null?f.bm-m:null;
-    const cls=m!==null?gapCls(m,f.bm):'';
-    const d=document.createElement('div');
-    d.className='fn-signal-row';
-    const gapLabel=gap===null?'Not calibrated':gap>0.25?'Critical gap':gap>0.08?'Moderate gap':gap>=0?'On track':'Above benchmark';
-    const gapStyle=gap===null?'background:#f0efe9;color:#9e9c96':gap>0.25?'background:#fdf0f0;color:#8c1f1f':gap>0.08?'background:#fef6e8;color:#7a4800':gap>=0?'background:#e8f4ee;color:#0f4c35':'background:#eef3fc;color:#1a3a6b';
-    d.innerHTML=`
-      <div class="fn-sig-name">${f.name}</div>
-      <div class="fn-sig-tracks">
-        <div class="fn-sig-track">
-          <div class="fn-sig-track-lbl">Your position</div>
-          <div class="fn-sig-bar-bg"><div class="fn-sig-bar-fill" style="width:${m!==null?Math.round(m*100):0}%;background:${m!==null?wfCol(f.w):'var(--paper3)'}"></div></div>
-          <div class="fn-sig-val">${m!==null?Math.round(m*100)+'%':'—'}</div>
+    const m=getM(f.id),gap=m!==null?f.bm-m:null;
+    const gLbl=gap===null?'Not calibrated':gap>0.25?'Critical gap':gap>0.08?'Moderate gap':gap>=0?'On track':'Above benchmark';
+    const gStyle=gap===null?'background:var(--paper3);color:var(--ink4)':gap>0.25?'background:var(--red2);color:var(--red)':gap>0.08?'background:var(--amber2);color:var(--amber)':gap>=0?'background:var(--green3);color:var(--green)':'background:var(--blue2);color:var(--blue)';
+    const d=document.createElement('div');d.className='fn-brow';
+    d.innerHTML=`<div class="fn-brow-name">${f.name}</div>
+      <div class="fn-brow-tracks">
+        <div class="fn-track">
+          <div class="fn-track-lbl">Your position</div>
+          <div class="fn-track-bg"><div class="fn-track-fill" style="width:${m!==null?Math.round(m*100):0}%;background:${m!==null?wfc(f.w):'var(--paper3)'}"></div></div>
+          <div class="fn-track-val">${m!==null?Math.round(m*100)+'%':'—'}</div>
         </div>
-        <div class="fn-sig-track">
-          <div class="fn-sig-track-lbl">India 2025</div>
-          <div class="fn-sig-bar-bg"><div class="fn-sig-bar-fill" style="width:${Math.round(f.bm*100)}%;background:#1a6b4a;opacity:.45"></div></div>
-          <div class="fn-sig-val" style="color:var(--ink3)">${Math.round(f.bm*100)}%</div>
+        <div class="fn-track">
+          <div class="fn-track-lbl">India 2025</div>
+          <div class="fn-track-bg"><div class="fn-track-fill" style="width:${Math.round(f.bm*100)}%;background:var(--green2);opacity:.4"></div></div>
+          <div class="fn-track-val" style="color:var(--ink3)">${Math.round(f.bm*100)}%</div>
         </div>
-        ${m!==null?`<div class="fn-sig-insight">${f.insight}</div>`:''}
+        ${m!==null?`<div class="fn-insight">${f.insight}</div>`:''}
       </div>
-      <span class="fn-sig-badge" style="${gapStyle}">${gapLabel}</span>`;
-    list.appendChild(d);
+      <span class="fn-brow-badge" style="${gStyle}">${gLbl}</span>`;
+    w.appendChild(d);
   });
 }
-
 function buildSignalMap(){
   ['sq-act','sq-plan','sq-hold','sq-widen'].forEach(id=>{document.getElementById(id).innerHTML='';});
   FN.forEach(f=>{
-    const m=getMaturity(f.id);
-    const gap=m!==null?f.bm-m:0;
-    const highD=f.d>=0.70, highG=gap>0.10;
+    const m=getM(f.id),gap=m!==null?f.bm-m:0;
+    const hD=f.d>=.70,hG=gap>0.10;
     let qid,style;
-    if(highD&&highG){qid='sq-act';style='background:#fdf0f0;color:#8c1f1f';}
-    else if(!highD&&highG){qid='sq-plan';style='background:#fef6e8;color:#7a4800';}
-    else if(highD&&!highG){qid='sq-widen';style='background:#e8f4ee;color:#0f4c35';}
-    else{qid='sq-hold';style='background:#e8f4ee;color:#1a5c36';}
-    const chip=document.createElement('span');
-    chip.className='sig-chip';
-    chip.style.cssText=style;
-    chip.textContent=f.name;
-    if(m===null){chip.style.opacity='.4';}
-    document.getElementById(qid).appendChild(chip);
+    if(hD&&hG){qid='sq-act';style='background:var(--red2);color:var(--red)';}
+    else if(!hD&&hG){qid='sq-plan';style='background:var(--amber2);color:var(--amber)';}
+    else if(hD&&!hG){qid='sq-widen';style='background:var(--green3);color:var(--green)';}
+    else{qid='sq-hold';style='background:var(--green3);color:var(--green2)';}
+    const c=document.createElement('span');c.className='sq-chip';c.style.cssText=style;c.textContent=f.name;
+    if(m===null)c.style.opacity='.38';
+    document.getElementById(qid).appendChild(c);
+  });
+}
+function buildOppWindow(sc){
+  const burners=FN.filter(f=>{const m=getM(f.id);return m!==null&&f.d>=.80&&f.bm-m>0.1;}).sort((a,b)=>b.d-a.d);
+  const wins=FN.filter(f=>['proc','fin','sc'].includes(f.id)&&getM(f.id)!==null);
+  const coN=coName==='Your organisation'?'The organisation':coName;
+  document.getElementById('b-opp-t').textContent=sc<40?'The window is open. It won\'t stay that way.':sc<58?'The foundation is there. The gap to the leaders is an 18-month decision.':'You\'re ahead. The only question is how far you extend the lead.';
+  document.getElementById('b-opp-b').textContent=sc<40?`India's mid-market manufacturers are at a decisive inflection point. The next 18 months will separate enterprises that treat AI as an operational imperative from those that treat it as a future option. ${coN}'s diagnostic reveals specific, high-value gaps — but critically, the SAP foundation and organisational readiness exist to close them faster than a standing start.`:sc<58?`${coN} has navigated the first wave of AI adoption. The challenge shifts from exploration to acceleration — moving from isolated pilots to enterprise-scale deployment, from tool adoption to genuine capability building. The India benchmark is catchable. The global benchmark is a 24-month programme. The constraint is not technology — it is leadership conviction and sequenced investment.`:`${coN} sits in the leading cohort of India mid-market manufacturers on AI readiness. The strategic question shifts from whether to invest to how aggressively — building capabilities that competitors cannot easily replicate. The gap to the global benchmark is the next frontier.`;
+  const moves=document.getElementById('b-opp-moves');moves.innerHTML='';
+  [...burners.slice(0,2).map(f=>({t:'Priority move: '+f.name,b:f.insight})),
+   ...wins.slice(0,1).map(f=>({t:'Quick win: '+f.name,b:f.insight})),
+   {t:'The leadership unlock',b:'Executive AI literacy — a structured 90-day programme for the leadership team — is the highest ROI investment available to any mid-market manufacturer today.'}
+  ].slice(0,4).forEach(o=>{const d=document.createElement('div');d.className='opp-move';d.innerHTML=`<div class="opp-move-t">${o.t}</div><div class="opp-move-b">${o.b}</div>`;moves.appendChild(d);});
+}
+function buildMonday(sc){
+  const burners=FN.filter(f=>{const m=getM(f.id);return m!==null&&f.d>=.80&&f.bm-m>0.15;}).sort((a,b)=>b.d-a.d);
+  const top=burners[0]||FN[0];
+  document.getElementById('b-monday').innerHTML=[
+    {n:'01',t:`<strong>Convene the right room.</strong> Share this APEX briefing with your leadership team. The conversation it starts — about ${top.name.toLowerCase()} and the gap to benchmark — is more valuable than the number itself.`},
+    {n:'02',t:`<strong>Commission one proof of value.</strong> Pick the highest-gap, SAP-ready function — ${['proc','fin','sc'].includes(top.id)?top.name:'Procurement or Finance'} — and run a 6-week AI proof of value. Real data, real ROI, board-visible output.`},
+    {n:'03',t:`<strong>Build the AI literacy muscle.</strong> Schedule a half-day executive AI workshop within 30 days. Not a technology briefing — a strategic capability session that puts your leadership team in control of the AI conversation, not behind it.`},
+  ].map(s=>`<div class="mstep"><div class="mstep-n">${s.n}</div><div class="mstep-t">${s.t}</div></div>`).join('');
+}
+
+// ─────────────────────────────────────────
+// DRISHTI
+// ─────────────────────────────────────────
+let dLoading=false;
+function toggleDrishti(){dOpen=!dOpen;document.getElementById('drishti-panel').classList.toggle('open',dOpen);document.getElementById('drishti-btn').classList.toggle('open',dOpen);document.getElementById('d-badge').style.display='none';}
+function openDrishti(){dOpen=true;document.getElementById('drishti-panel').classList.add('open');document.getElementById('drishti-btn').classList.add('open');document.getElementById('d-badge').style.display='none';}
+
+function buildDrishtiContext(){
+  const sc=overallScore();
+  const answered=FN.filter(f=>getM(f.id)!==null);
+  const burners=answered.filter(f=>{const m=getM(f.id);return f.d>=.80&&f.bm-m>0.15;}).sort((a,b)=>b.d-a.d);
+  const leaders=answered.filter(f=>{const m=getM(f.id);return m>=f.bm;});
+  const gaps=answered.filter(f=>{const m=getM(f.id);return f.bm-m>0.20;});
+  const fnScores=answered.map(f=>`${f.name}: ${Math.round(getM(f.id)*100)}% (benchmark: ${Math.round(f.bm*100)}%, gap: ${Math.round((f.bm-getM(f.id))*100)}pp)`).join('\n');
+  const coN=coName==='Your organisation'?'the organisation':coName;
+  return `You are DRISHTI (दृष्टि) — the AI readiness advisor embedded within APEX, the AI Positioning & Exposure Index for India mid-market manufacturing.
+
+DRISHTI means "vision" in Sanskrit. You provide sharp, senior-level strategic counsel. You are not a generic AI chatbot. You speak like a trusted senior advisor — direct, insightful, India-aware. You know this organisation's data.
+
+ORGANISATION CONTEXT:
+- Name: ${coN}
+- Revenue band: ${coRev}
+- Industry: India mid-market manufacturing
+- Persona completing the diagnostic: ${persona === 'csuite' ? 'C-Suite / Board' : persona === 'ops' ? 'Operations / Functional Head' : 'IT / Digital Lead'}
+
+APEX RESULTS:
+- APEX number: ${sc}/100
+- India mid-market average: 41/100
+- Leading peers: 68/100
+- Position: ${sc<35?'Early stage':sc<42?'Below average':sc<58?'Above average':'Leading tier'}
+
+FUNCTION SCORES:
+${fnScores.length>0?fnScores:'Diagnostic not yet completed — partial data only'}
+
+RED ZONES (high disruption, significant gap):
+${burners.length>0?burners.map(f=>`- ${f.name}: ${Math.round(getM(f.id)*100)}% maturity, ${Math.round(f.d*100)}% disruption potential, ${Math.round((f.bm-getM(f.id))*100)}pp behind benchmark`).join('\n'):'None identified yet'}
+
+STRENGTHS (at or above benchmark):
+${leaders.length>0?leaders.map(f=>`- ${f.name}: ${Math.round(getM(f.id)*100)}% maturity (benchmark ${Math.round(f.bm*100)}%)`).join('\n'):'None identified yet'}
+
+India-specific context you know well:
+- PLI scheme driving operations and quality urgency
+- SAP foundation exists in most mid-market players — data is there, AI layer is not
+- Labour arbitrage erosion making operations AI existential
+- China+1 export opportunity requiring quality AI
+- GST reconciliation automation is a uniquely Indian quick win in Finance
+- Executive AI literacy is the single highest-leverage unlock
+- WhatsApp-first B2B sales culture in mid-market manufacturing
+
+YOUR ROLE:
+Answer questions with the authority of a senior consultant who has studied this organisation's data. Be specific — reference their scores, their gaps, their industry context. Never be generic. If asked what to do, give sequenced, practical advice. Keep responses focused and sharp — 3-5 sentences max unless a detailed breakdown is explicitly requested. Use the APEX language (Red zones, Signal map, Widen the gap, APEX number). Always sign off with "— Drishti" when ending a response.`;
+}
+
+function buildDrishtiPrompts(){
+  const sc=overallScore();
+  const burners=FN.filter(f=>{const m=getM(f.id);return m!==null&&f.d>=.80&&f.bm-m>0.15;}).sort((a,b)=>b.d-a.d);
+  const prompts=[];
+  if(burners.length)prompts.push(`What should I tell my board about the ${burners[0].name} gap?`);
+  prompts.push('Where should we invest our first ₹5Cr in AI?');
+  prompts.push(`How does our APEX number of ${sc} compare to peers?`);
+  if(burners.length>1)prompts.push(`Why is ${burners[1].name} a red zone — and what do we do?`);
+  prompts.push('What does our 90-day action plan look like?');
+  const container=document.getElementById('d-prompts');
+  container.innerHTML='<div class="d-prompt-label">Ask DRISHTI</div>';
+  prompts.slice(0,3).forEach(p=>{
+    const btn=document.createElement('button');btn.className='d-prompt';btn.textContent=p;
+    btn.onclick=()=>{document.getElementById('d-input').value=p;sendMsg();};
+    container.appendChild(btn);
   });
 }
 
-function buildOppWindow(score){
-  const burners=FN.filter(f=>{const m=getMaturity(f.id);return m!==null&&f.d>=.80&&f.bm-m>0.1;}).sort((a,b)=>b.d-a.d);
-  const wins=FN.filter(f=>['proc','fin','sc'].includes(f.id)&&getMaturity(f.id)!==null);
-
-  document.getElementById('b-opp-title').textContent=score<40
-    ?'The window is open — but it won\'t stay that way.'
-    :score<58
-    ?'The foundation is there. The gap to the leaders is an 18-month decision.'
-    :'You\'re ahead. The only question now is how far you extend the lead.';
-
-  document.getElementById('b-opp-body').textContent=score<40
-    ?`India's mid-market manufacturers are at a decisive inflection point. The next 18 months will determine which enterprises emerge as AI-enabled competitors and which find themselves repriced out of key markets. ${coName}'s diagnostic reveals specific, high-value gaps — but critically, the SAP foundation and organisational readiness exist to close them faster than a standing start.`
-    :score<58
-    ?`${coName} has navigated the first wave of AI adoption. The challenge shifts from exploration to acceleration — moving from isolated pilots to enterprise-scale deployment, from tool adoption to genuine capability building. The India benchmark is catchable. The global benchmark is a 24-month programme. The constraint is not technology — it is leadership conviction and sequenced investment.`
-    :`${coName} sits in the leading cohort of India mid-market manufacturers on AI readiness. The strategic question is no longer whether to invest in AI — it is whether to invest aggressively enough to create capabilities that competitors cannot easily replicate. The gap to the global benchmark is the next frontier.`;
-
-  const moves=document.getElementById('b-opp-moves');
-  moves.innerHTML='';
-  const items=[
-    ...(burners.slice(0,2).map(f=>({title:'Priority move: '+f.name,body:f.insight}))),
-    ...(wins.slice(0,1).map(f=>({title:'Quick win: '+f.name,body:f.insight}))),
-    {title:'The leadership unlock',body:'Executive AI literacy — a structured 90-day programme for the leadership team — is the highest ROI investment available to any mid-market manufacturer today.'},
-  ].slice(0,4);
-  items.forEach(item=>{
-    const d=document.createElement('div');
-    d.className='opp-move';
-    d.innerHTML=`<div class="opp-move-title">${item.title}</div><div class="opp-move-body">${item.body}</div>`;
-    moves.appendChild(d);
-  });
+function triggerDrishtiWelcome(){
+  if(dMsgHistory.length>0)return;
+  buildDrishtiPrompts();
+  const sc=overallScore();
+  const burners=FN.filter(f=>{const m=getM(f.id);return m!==null&&f.d>=.80&&f.bm-m>0.15;}).sort((a,b)=>b.d-a.d);
+  const coN=coName==='Your organisation'?'your organisation':coName;
+  let welcome=`I have your APEX briefing. ${coN} scores ${sc} — ${sc<41?'below':'above'} the India mid-market average of 41. `;
+  if(burners.length)welcome+=`Your most urgent signal is <strong>${burners[0].name}</strong> — high disruption, significant gap. `;
+  welcome+=`What do you want to dig into?`;
+  addDrishtiMsg(welcome, 'drishti', false);
+  document.getElementById('d-context').textContent=`Calibrated to ${coN} · ${sc}/100 APEX · Manufacturing`;
 }
 
-function buildMonday(score){
-  const burners=FN.filter(f=>{const m=getMaturity(f.id);return m!==null&&f.d>=.80&&f.bm-m>0.15;}).sort((a,b)=>b.d-a.d);
-  const topFn=burners[0]||FN[0];
-  const steps=document.getElementById('b-monday');
-  steps.innerHTML='';
-  const actions=[
-    {num:'01',text:`<strong>Convene the right room.</strong> Share this APEX briefing with your leadership team. The conversation it starts — about ${topFn.name.toLowerCase()} and the gap to benchmark — is more valuable than the number itself.`},
-    {num:'02',text:`<strong>Commission one proof of value.</strong> Pick the highest-gap, SAP-ready function — ${['proc','fin','sc'].includes(topFn.id)?topFn.name:'Procurement or Finance'} — and run a 6-week AI proof of value. Real data, real ROI, board-visible output.`},
-    {num:'03',text:`<strong>Build the AI literacy muscle.</strong> Schedule a half-day executive AI workshop within 30 days. Not a technology briefing — a strategic capability session that puts your leadership team in control of the AI conversation, not behind it.`},
-  ];
-  actions.forEach(a=>{
-    const d=document.createElement('div');
-    d.className='monday-step';
-    d.innerHTML=`<div class="monday-step-num">${a.num}</div><div class="monday-step-text">${a.text}</div>`;
-    steps.appendChild(d);
-  });
+function addDrishtiMsg(text, role, isLoading){
+  const msgs=document.getElementById('d-msgs');
+  const d=document.createElement('div');
+  d.className='d-msg '+role;
+  if(isLoading){
+    d.innerHTML=`<div class="d-msg-from">${role==='drishti'?'DRISHTI':'You'}</div><div class="d-typing"><div class="d-dot"></div><div class="d-dot"></div><div class="d-dot"></div></div>`;
+  } else {
+    d.innerHTML=`<div class="d-msg-from">${role==='drishti'?'DRISHTI':'You'}</div><div class="d-msg-bubble">${text}</div>`;
+  }
+  msgs.appendChild(d);
+  msgs.scrollTop=msgs.scrollHeight;
+  return d;
+}
+
+async function sendMsg(){
+  const inp=document.getElementById('d-input');
+  const msg=inp.value.trim();if(!msg||dLoading)return;
+  inp.value='';dLoading=true;
+  document.getElementById('d-send-btn').disabled=true;
+  document.getElementById('d-prompts').style.display='none';
+  addDrishtiMsg(msg,'user',false);
+  dMsgHistory.push({role:'user',content:msg});
+  const typing=addDrishtiMsg('','drishti',true);
+  try{
+    const sysPrompt=buildDrishtiContext();
+    const messages=[...dMsgHistory];
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:sysPrompt,
+        messages:messages
+      })
+    });
+    const data=await res.json();
+    const reply=data.content?.[0]?.text||'I could not generate a response. Please try again.';
+    typing.remove();
+    addDrishtiMsg(reply,'drishti',false);
+    dMsgHistory.push({role:'assistant',content:reply});
+  }catch(e){
+    typing.remove();
+    addDrishtiMsg('I encountered an error. Please try again. — Drishti','drishti',false);
+  }
+  dLoading=false;
+  document.getElementById('d-send-btn').disabled=false;
 }
 </script>
 </body>
